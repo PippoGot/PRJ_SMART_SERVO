@@ -1,0 +1,19 @@
+Circuit: * D:\Data\_PROGETTI\PRJ_SMART_SERVO\MODELS & SIMULATIONS\H Bridge sim.asc
+
+Questionable use of curly braces in "hemf 2 3 vsense2 {kemf}"
+    Error: undefined symbol in: "[kemf]"
+Questionable use of curly braces in "htorq 4 b vsense1 {kt}"
+    Error: undefined symbol in: "[kt]"
+Questionable use of curly braces in "li 4 5 {im}"
+    Error: undefined symbol in: "[im]"
+Questionable use of curly braces in "rb 5 6 {bm}"
+    Error: undefined symbol in: "[bm]"
+Error on line 46 : h:u9:emf u9:2 u9:3 v:u9:sense2 (kemf)
+	 Unknown parameter "kemf"
+Error on line 48 : h:u9:torq u9:4 n007«:b» v:u9:sense1 (kt)
+	 Unknown parameter "kt"
+Error on line 49 : l:u9:i u9:4 u9:5 im)
+	 Unknown parameter "im"
+Error on line 50 : r:u9:b u9:5 u9:6 bm)
+	 Unable to find definition of model "bm"
+Fatal Error: u9:htorq: Missing transresistance value
