@@ -59,24 +59,24 @@ AO3400.Coss = 99;       % output capacitance                                [pF]
 
 %% Motor Parameters
 
-motor.Ra = 2.4;                 % motor armature resistance                 [ohm]       TO MEASURE
-motor.La = 2e-9;                % motor armature inductance                 [H]         TO MEASURE
+motor.Ra = 2.4;                     % motor armature resistance             [ohm]       TO MEASURE
+motor.La = 2e-6;                    % motor armature inductance             [H]         TO MEASURE
 
 
-motor.Vn = 5;                   % motor rated voltage                       [V]         FROM DS
-motor.wmo = 12000;              % motor no-load speed                       [rpm]       FROM DS
-motor.Imo = 0.14;               % motor no-load current                     [A]         FROM DS
+motor.Vn = 5;                       % motor rated voltage                   [V]         FROM DS
+motor.wmo = 12000;                  % motor no-load speed                   [rpm]       FROM DS
+motor.Imo = 0.14;                   % motor no-load current                 [A]         FROM DS
 
-motor.tl = 0.98;                % motor rated load                          [mN*m]      FROM DS
-motor.wn = 10600;               % motor load speed                          [rpm]       FROM DS
-motor.In = 0.42;                % motor load current                        [A]         FROM DS
+motor.tl = 0.98;                    % motor rated load                      [mN*m]      FROM DS
+motor.wn = 10600;                   % motor load speed                      [rpm]       FROM DS
+motor.In = 0.42;                    % motor load current                    [A]         FROM DS
 
-motor.ts = 4.5;                 % motor stall torque                        [mN*m]      INDIRECTLY FROM DS
+motor.ts = 4.5;                     % motor stall torque                    [mN*m]      INDIRECTLY FROM DS
 
-motor.J = 1.2;                  % motor inertia                             [g*cm^2]    TO ESTIMATE
-motor.B = 0;                    % motor friction                            []          TO ESTIMATE
+motor.J = 1.2*conv.g_cm2__to__kg_m2;% motor inertia                         [Kg*m^2]    TO ESTIMATE
+motor.B = 0;                        % motor friction                        [N*m*s]     TO ESTIMATE
 
-motor.gearbox = 11/(61*36);     % gearbox ratio                             [#]         COUNTED
+motor.gearbox = 11/(61*36);         % gearbox ratio                         [#]         COUNTED
 
 % motor geometry constant
 motor.Kphi = motor.Vn / (motor.wmo * conv.rpm__to__rad_s);                 %[V*s] 
