@@ -13,7 +13,7 @@ Scaletta misura e stima parametri del motore:
 
     + Kphi = E / wm
 
-- tau_s + B:    ù
+- tau_s + B:   
     + per diversi valori di tensione acquisire la corrente e la velocità angolare del motore
     in steady state
 
