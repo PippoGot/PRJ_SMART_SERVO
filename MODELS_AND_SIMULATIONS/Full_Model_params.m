@@ -94,6 +94,9 @@ vc.Kc = 5;      % voltage gain                                              [V]
 vc.wb = 2e6;    % deadband frequency                                        [rad_s]
 
 
+%% Motor Sensor Parameters
+
+
 
 
 
