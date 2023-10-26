@@ -60,7 +60,7 @@ AO3400.Coss = 99;       % output capacitance                                [pF]
 %% Motor Parameters
 
 motor.Ra = 2.4;                     % motor armature resistance             [ohm]       TO MEASURE
-motor.La = 2e-6;                    % motor armature inductance             [H]         TO MEASURE
+motor.La = 2e-9;                    % motor armature inductance             [H]         TO MEASURE
 
 
 motor.Vn = 5;                       % motor rated voltage                   [V]         FROM DS
@@ -85,13 +85,15 @@ motor.Kphi = motor.Vn / (motor.wmo * conv.rpm__to__rad_s);                 %[V*s
 motor.Te = motor.La / motor.Ra;                                            %[s]
 
 % motor electromechanical time constant
-motor.Tm1 = (motor.J * conv.g_cm2__to__kg_m2 * motor.Ra) / motor.Kphi^2;   %[s]
+motor.Tm1 = (motor.J * motor.Ra) / motor.Kphi^2;                           %[s]
 
 
 %% Voltage Converter Parameters
 
 vc.Kc = 5;      % voltage gain                                              [V]
-vc.wb = 2e6;    % deadband frequency                                        [rad_s]
+vc.fsw = 10e3;  % switching frequency [Hz]
+vc.wbi = 2*pi*vc.fsw; % bandwidth [rad/s]
+
 
 
 
