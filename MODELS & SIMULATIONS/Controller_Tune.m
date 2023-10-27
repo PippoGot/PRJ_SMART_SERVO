@@ -7,6 +7,8 @@ Full_Model_params;
 
 s = tf('s');
 
+ts_star = 0.85;         %settling time 
+
 %% PI Tune of Current Controller
 
 % current requirements
@@ -34,6 +36,11 @@ figure(2)
 % margin(Li)
 bode(Li, Wi)
 
+% anti wind-up
+
+Ri.Tw = ts_star/5;
+Ri.Kw = 1/Ri.Tw;
+
 
 %% PI Tune of Speed Controller
 
@@ -60,6 +67,13 @@ Lw = (Rw.Ki * (1 + s * Rw.Tpi) / s) * Gw;
 
 figure(4)
 margin(Lw)
+
+% anti wind-up
+
+Rw.Tw = ts_star/5;
+Rw.Kw = 1/Rw.Tw;
+
+
 
 
 
