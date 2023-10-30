@@ -12,11 +12,11 @@ ts_star = 0.85;         %settling time
 %% PI Tune of Current Controller
 
 % current requirements
-wc = vc.wbi/10;
+wc = vc.fsw/10;
 
 
 % open loop current tf
-Gi = s * (vc.Kc * motor.Tm1 / motor.Ra) / ((1 + s / vc.wbi)*(1 + s * motor.Tm1)*(1 + s * motor.Te));
+Gi = s * (vc.Kc * motor.Tm1 / motor.Ra) / ((1 + s / vc.fsw)*(1 + s * motor.Tm1)*(1 + s * motor.Te));
 
 figure(1)
 bode(Gi)
@@ -45,7 +45,7 @@ Ri.Kw = 1/Ri.Tw;
 %% PI Tune of Speed Controller
 
 % speed requirements
-tr = 2e-3;              % rise time                                         [s]
+tr = 0.1;               % rise time                                         [s]
 wb = 2.2 / tr;          % crossing frequency                                [rad_s]
 m_phi = 65;             % minimum phase margin                              [deg]
 

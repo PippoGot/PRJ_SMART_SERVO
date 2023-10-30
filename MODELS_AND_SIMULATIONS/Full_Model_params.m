@@ -60,7 +60,7 @@ AO3400.Coss = 99;       % output capacitance                                [pF]
 %% Motor Parameters
 
 motor.Ra = 2.4;                     % motor armature resistance             [ohm]       TO MEASURE
-motor.La = 2e-9;                    % motor armature inductance             [H]         TO MEASURE
+motor.La = 2e-6;                    % motor armature inductance             [H]         TO MEASURE
 
 
 motor.Vn = 5;                       % motor rated voltage                   [V]         FROM DS
@@ -90,9 +90,9 @@ motor.Tm1 = (motor.J * motor.Ra) / motor.Kphi^2;                           %[s]
 
 %% Voltage Converter Parameters
 
-vc.Kc = 5;      % voltage gain                                              [V]
-vc.fsw = 10e3;  % switching frequency [Hz]
-vc.wbi = 2*pi*vc.fsw; % bandwidth [rad/s]
+vc.Kc = 5;          % voltage gain                                          [V]
+vc.fsw = 10e3;      % switching frequency                                   [Hz]
+vc.Tc = 1/vc.fsw;   % delay time                                            [s]
 
 
 
