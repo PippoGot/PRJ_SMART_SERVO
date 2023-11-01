@@ -22,7 +22,7 @@ Gi = Li / (1 + Li);
 
 %% PI Tune of Speed Controller
 
-Rw.tr = 0.05;
+Rw.tr = 0.01;
 Rw.wb = 2.2 / Rw.tr;
 Rw.mphi = 65;
 

@@ -95,6 +95,13 @@ vc.fsw = 10e3;      % switching frequency                                   [Hz]
 vc.Tc = 1/vc.fsw;   % delay time                                            [s]
 
 
+%% Saturation Values
+
+sat.w = 12000;      % saturation speed                                      [rpm]
+sat.I = 1.5;        % saturation current                                    [I]
+sat.d = 1;          % saturation duty-cycle                                 [#]
+
+
 
 
 
