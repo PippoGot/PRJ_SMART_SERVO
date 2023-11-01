@@ -85,13 +85,22 @@ motor.Kphi = motor.Vn / (motor.wmo * conv.rpm__to__rad_s);                 %[V*s
 motor.Te = motor.La / motor.Ra;                                            %[s]
 
 % motor electromechanical time constant
-motor.Tm1 = (motor.J * conv.g_cm2__to__kg_m2 * motor.Ra) / motor.Kphi^2;   %[s]
+motor.Tm1 = (motor.J * motor.Ra) / motor.Kphi^2;                           %[s]
 
 
 %% Voltage Converter Parameters
 
-vc.Kc = 5;      % voltage gain                                              [V]
-vc.wb = 2e6;    % deadband frequency                                        [rad_s]
+vc.Kc = 5;          % voltage gain                                          [V]
+vc.fsw = 10e3;      % switching frequency                                   [Hz]
+vc.Tc = 1/vc.fsw;   % delay time                                            [s]
+
+
+%% Saturation Values
+
+sat.w = 12000;      % saturation speed                                      [rpm]
+sat.I = 1.5;        % saturation current                                    [I]
+sat.d = 1;          % saturation duty-cycle                                 [#]
+
 
 
 
