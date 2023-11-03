@@ -44,6 +44,13 @@ NMOS.Coss = 280;        % output capacitance                                [pF]
 diode.Vd = 1;           % diode forward voltage                             [V]
 diode.Id = 2.5;         % diode source current                              [A]
 
+%% Operational Amplifier parameters
+opamp.gain = 1e5;       % DC voltage gain                                   [#]
+opamp.Rin = 1e6;        % input resistance                                  [Ohm]
+opamp.Rout = 1.2e3;     % output resistance                                 [Ohm]
+opamp.Vmin = 0;         % minimum output voltage                            [V]
+opamp.Vmax = 3.5;       % maximum output voltage                            [V]
+
 
 %% Inverter MOSFET Parameters (From Datasheet)
 
@@ -59,8 +66,8 @@ AO3400.Coss = 99;       % output capacitance                                [pF]
 
 %% Motor Parameters
 
-motor.Ra = 2.4;                     % motor armature resistance             [ohm]       TO MEASURE
-motor.La = 2e-6;                    % motor armature inductance             [H]         TO MEASURE
+motor.Ra = 2;                       % motor armature resistance             [ohm]       MEASURED
+motor.La = 6.8e-6;                  % motor armature inductance             [H]         MEASURED
 
 
 motor.Vn = 5;                       % motor rated voltage                   [V]         FROM DS
@@ -102,11 +109,11 @@ sat.I = 1.5;        % saturation current                                    [I]
 sat.d = 1;          % saturation duty-cycle                                 [#]
 
 
+%% Current Sensor
 
-
-
-
-
+csens.Rf = 220e3;       % feedback resistance                               [Ohm]
+csens.Rg = 10e3;        % gain resistance                                   [Ohm]
+csens.Rs = 0.1;         % shunt resistance                                  [Ohm]
 
 
 
