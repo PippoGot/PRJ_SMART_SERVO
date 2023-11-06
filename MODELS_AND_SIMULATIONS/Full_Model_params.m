@@ -67,7 +67,7 @@ AO3400.Coss = 99;       % output capacitance                                [pF]
 %% Motor Parameters
 
 motor.Ra = 2;                       % motor armature resistance             [ohm]       MEASURED
-motor.La = 6.8e-6;                  % motor armature inductance             [H]         MEASURED
+motor.La = 7e-3;                    % motor armature inductance             [H]         MEASURED
 
 
 motor.Vn = 5;                       % motor rated voltage                   [V]         FROM DS
@@ -116,7 +116,18 @@ csens.Rg = 10e3;        % gain resistance                                   [Ohm
 csens.Rs = 0.1;         % shunt resistance                                  [Ohm]
 
 
+%% Quantizer and Zero-Order Hold
+%controller
+adc.bits = 12;                              % resolution (bits)
+adc.fs = 10;                                % full scale (as set in SLDRT Analog Input block) 
+adc.q = 2*adc.fs/(2^adc.bits-1);            % quantization
 
+%timer
+tim.bits = 16;                              % resolution (bits)
+tim.fs = 10;                                % full scale (as set in SLDRT Analog Input block) 
+tim.q = 2*tim.fs/(2^tim.bits-1);            % quantization
+
+zoh.Ts = 10e-3;                              % zero-order hold time sampling
 
 
 
