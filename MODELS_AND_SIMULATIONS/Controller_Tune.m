@@ -4,19 +4,20 @@ close all
 clc
 
 Full_Model_params;
+
 s = tf('s');
 
 
 %% PI Tune of Current Controller
 
-Ki1 = (motor.Tm1^2 + vc.Tc^2) / (2*motor.Tm1*vc.Tc) - 1;
+Ki1 = (motor.Tm1^2 + bridge.Tdelay^2) / (2*motor.Tm1*bridge.Tdelay) - 1;
 
 Ri.Tpi = motor.Te;
-Ri.Ki = Ki1 * motor.Ra / (vc.Kc * motor.Tm1);
+Ri.Ki = Ki1 * motor.Ra / (bridge.gain * motor.Tm1);
 Ri.Kp = Ri.Tpi * Ri.Ki;
 
-Ai = Ri.Ki * vc.Kc * motor.Tm1 / motor.Ra;
-Li = Ai / ((1 + s * motor.Tm1) * (1 + s * vc.Tc));
+Ai = Ri.Ki * bridge.gain * motor.Tm1 / motor.Ra;
+Li = Ai / ((1 + s * motor.Tm1) * (1 + s * bridge.Tdelay));
 Gi = Li / (1 + Li);
 
 
