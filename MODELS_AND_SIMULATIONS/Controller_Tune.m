@@ -1,58 +1,52 @@
 %% Initialization
 
 close all
-%clc
+clc
 
 Full_Model_params;
 
 s = tf('s');
 
+
 %% PI Tune of Current Controller
 
-% requirements
-tr = 1e-4;              % rise time                                         [s]
-wc = 2.2 / tr;          % crossing frequency                                [rad_s]
+Ki1 = (motor.Tm1^2 + bridge.Tdelay^2) / (2*motor.Tm1*bridge.Tdelay) - 1;
 
-% open loop current tf
-Gi = s * (vc.Kc * motor.Tm1 / motor.Ra) / ((1 + s / vc.wb)*(1 + s * motor.Tm1)*(1 + s * motor.Te));
+Ri.Tpi = motor.Te;
+Ri.Ki = Ki1 * motor.Ra / (bridge.gain * motor.Tm1);
+Ri.Kp = Ri.Tpi * Ri.Ki;
 
-%figure(1)
-%bode(Gi)
-
-% current pidtune PI
-Ri.Tpi = motor.Tm1;     % set to have a cancellation
-
-[mag, phase] = bode(Gi * (1 + s * Ri.Tpi) / s, wc); % get magnitude
-
-Ri.Ki = 1/mag;          % integral coefficient
-Ri.Kp = Ri.Tpi*Ri.Ki;   % proportional coefficient
-
-Li = (Ri.Ki * (1 + s * Ri.Tpi) / s) * Gi;
-
-figure(2)
-margin(Li)
+Ai = Ri.Ki * bridge.gain * motor.Tm1 / motor.Ra;
+Li = Ai / ((1 + s * motor.Tm1) * (1 + s * bridge.Tdelay));
+Gi = Li / (1 + Li);
 
 
 %% PI Tune of Speed Controller
 
-% open loop speed tf
-Gw = Li/(1+Li) * motor.Kphi / (s * motor.J);
+Rw.tr = 0.01;
+Rw.wb = 2.2 / Rw.tr;
+Rw.mphi = 65;
 
-%figure(3)
-%bode(Gw)
+Rw.Tpi = -tan(Rw.mphi) / Rw.wb;
 
-% speed pidtune PI
-Rw.Tpi = motor.Tm1;
 
-[mag, phase] = bode(Gw, wc);    % get magnitude
+Lw1 = Gi * motor.Kphi * (1 + s * Rw.Tpi) / (s^2 * motor.J);
+[magnitude, phase] = bode(Lw1, Rw.wb);
 
-Rw.Ki = 1/mag;          % integral coefficient
-Rw.Kp = Rw.Tpi*Rw.Ki;   % proportional coefficient
+Rw.Ki = 1 / magnitude;
+Rw.Kp = Rw.Tpi * Rw.Ki;
 
-Lw = (Rw.Ki * (1 + s * Rw.Tpi) / s) * Gw;
+Lw = Rw.Ki * Lw1;
+Gw = Lw / (1 + Lw);
 
-figure(4)
-margin(Lw)
+
+% figure(1)
+% bode(Lw, Gw)
+
+
+%% P Tune of Position Controller
+
+% ???
 
 
 
