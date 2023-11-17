@@ -1,5 +1,6 @@
-../Core/Src/main.c:66:5:main	3
-../Core/Src/main.c:130:6:SystemClock_Config	3
-../Core/Src/main.c:169:13:MX_TIM1_Init	8
-../Core/Src/main.c:248:13:MX_GPIO_Init	1
-../Core/Src/main.c:269:6:Error_Handler	1
+../Core/Src/main.cpp:69:5:int main()	1
+../Core/Src/main.cpp:133:6:void SystemClock_Config()	3
+../Core/Src/main.cpp:172:13:void MX_I2C1_Init()	2
+../Core/Src/main.cpp:206:13:void MX_TIM1_Init()	8
+../Core/Src/main.cpp:285:13:void MX_GPIO_Init()	1
+../Core/Src/main.cpp:307:6:void Error_Handler()	1
