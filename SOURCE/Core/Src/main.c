@@ -21,7 +21,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "AS5600.hpp"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -93,23 +93,6 @@ int main(void)
   MX_TIM1_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
-
-  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1); // start timer
-
-  AS5600 MagneticEncoder(&hi2c1); // init encoder
-
-  float angle; // utility variables
-  uint16_t duty = 102, max_duty = 513;
-
-  //bool connection = MagneticEncoder.isConnected(); // connection test
-
-  for(int i = duty; i < max_duty; i++){
-	  __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 4095 - i); // set duty
-
-	  HAL_Delay(500); // wait for motor to reach position
-
-	  angle = MagneticEncoder.getRealAngle(AS5600_DEGREES); // read angle
-  }
 
   /* USER CODE END 2 */
 
@@ -219,7 +202,7 @@ static void MX_TIM1_Init(void)
   htim1.Instance = TIM1;
   htim1.Init.Prescaler = 0;
   htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim1.Init.Period = 65535;
+  htim1.Init.Period = 4095;
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim1.Init.RepetitionCounter = 0;
   htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
@@ -250,10 +233,6 @@ static void MX_TIM1_Init(void)
   sConfigOC.OCIdleState = TIM_OCIDLESTATE_RESET;
   sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_RESET;
   if (HAL_TIM_PWM_ConfigChannel(&htim1, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  if (HAL_TIM_PWM_ConfigChannel(&htim1, &sConfigOC, TIM_CHANNEL_3) != HAL_OK)
   {
     Error_Handler();
   }
