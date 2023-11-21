@@ -1,3 +1,13 @@
-./slrpj
-.slxc
-.asv
+# Matlab generated files and folders
+
+slprj/
+**/*.slxc
+**/*.asv
+MODELS_AND_SIMULATIONS/*.bin
+**/*.elf
+**_ert_rtw/
+**/*.DS_Store
+
+# Other
+
+**/*.log
