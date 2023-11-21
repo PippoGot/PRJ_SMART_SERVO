@@ -121,7 +121,7 @@ motor.In = 0.42;                    % motor load current                    [A] 
 motor.ts = 4.5;                     % motor stall torque                    [mN*m]      INDIRECTLY FROM DS
 
 motor.J = 1.2*conv.g_cm2__to__kg_m2;% motor inertia                         [Kg*m^2]    TO ESTIMATE
-motor.B = 0;                        % motor friction                        [N*m*s]     TO ESTIMATE
+motor.B = 5e-7;                        % motor friction                        [N*m*s]     TO ESTIMATE
 
 motor.gearbox = 11/(61*36);         % gearbox ratio                         [#]         COUNTED
 
