@@ -4,6 +4,7 @@ clc
 close all
 
 Full_Model_params;
+Controller_Tune;
 
 
 %% State space model
@@ -12,18 +13,15 @@ B = [0; 0; 1/motor.La];
 C = [0, 0, 1; 1, 0, 0];
 D = zeros(size(C,1),size(B,2));
 
-Q = 0*eye(3);
+Q = [0, 0, 0; 0, 0, 0; 0, 0, 1];
 R = eye(2);
 
 sys = ss(A,B,C,D);
+
 dsys = c2d(sys, uc.Ts, 'zoh');
 
 [dA, dB, dC, dD] = ssdata(dsys);
 
-
-%% Kalman Filter Pillonetto
-
-P = A*P
 
 
 %% Kalman filter 
