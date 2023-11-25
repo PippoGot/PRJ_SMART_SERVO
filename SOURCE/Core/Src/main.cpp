@@ -22,6 +22,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "AS5600.hpp"
+#include "INA219.hpp"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -94,9 +95,15 @@ int main(void)
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
 
-  AS5600 TestDevice(&hi2c1);
-  uint16_t angle, ZPOS, MPOS, MANG = 0;
-  bool connection, setting;
+  AS5600 Encoder(&hi2c1);
+
+  const float shunt_resistor = 0.1, max_expected_current = 3.0;	// Ohms, Amps
+  INA219 ShuntSensor(&hi2c1, max_expected_current, shunt_resistor);
+
+  uint16_t calibration = 0;
+  float current_reading_A = 0, current_reading_mA;
+
+  bool connection;
 
   /* USER CODE END 2 */
 
@@ -106,18 +113,12 @@ int main(void)
   {
     /* USER CODE END WHILE */
 
-	connection = TestDevice.isConnected();
-	angle = TestDevice.getAngle();
+	connection = ShuntSensor.isConnected();
 
-	ZPOS = TestDevice.getZPosition();
-	MPOS = TestDevice.getMPosition();
-	MANG = TestDevice.getMaxAngle();
+	calibration = ShuntSensor.getCalibration();
 
-	TestDevice.setZPosition(2048);
-
-	ZPOS = TestDevice.getZPosition();
-	MPOS = TestDevice.getMPosition();
-	MANG = TestDevice.getMaxAngle();
+	current_reading_A = ShuntSensor.getCurrent();
+	current_reading_mA = ShuntSensor.getCurrent_mA();
 
 	HAL_Delay(100);
 
