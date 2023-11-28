@@ -21,8 +21,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "AS5600.hpp"
-#include "INA219.hpp"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -47,7 +46,6 @@ TIM_HandleTypeDef htim1;
 
 /* USER CODE BEGIN PV */
 
-
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -56,12 +54,12 @@ static void MX_GPIO_Init(void);
 static void MX_TIM1_Init(void);
 static void MX_I2C1_Init(void);
 /* USER CODE BEGIN PFP */
-float current_reading_A = 0, current_reading_mA = 0, angle_reading_deg = 0;
-uint16_t angle_reading_ADC = 0;
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
 /* USER CODE END 0 */
 
 /**
@@ -71,13 +69,6 @@ uint16_t angle_reading_ADC = 0;
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	AS5600 Encoder(&hi2c1, 0x36, AS5600::CLOCK_WISE, 0x01);
-
-	const float shunt_resistor = 0.1, max_expected_current = 3.0;	// Ohms, Amps
-	INA219 ShuntSensor(&hi2c1, max_expected_current, shunt_resistor, 0x40, 0x01);
-
-	uint16_t calibration = 0;
-	bool connection;
 
   /* USER CODE END 1 */
 
@@ -110,15 +101,6 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
-	connection = ShuntSensor.isConnected();
-
-	current_reading_A = ShuntSensor.getCurrent();
-	current_reading_mA = ShuntSensor.getCurrent_mA();
-	angle_reading_deg = Encoder.getRealAngle(AS5600::DEGREES);
-	angle_reading_ADC = Encoder.getAngle();
-
-	HAL_Delay(1);
 
     /* USER CODE BEGIN 3 */
   }
@@ -296,17 +278,7 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-int _write(int file, char *ptr, int len)
-{
-  (void)file;
-  int DataIdx;
 
-  for (DataIdx = 0; DataIdx < len; DataIdx++)
-  {
-    ITM_SendChar(*ptr++);
-  }
-  return len;
-}
 /* USER CODE END 4 */
 
 /**
