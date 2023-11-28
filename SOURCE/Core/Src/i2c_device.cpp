@@ -21,7 +21,7 @@ I2C_Device::I2C_Device(I2C_HandleTypeDef *device_handle, uint8_t device_address,
 
 // --- Low-level I2C methods ------------------------------------------------------------
 
-HAL_StatusTypeDef I2C_Device::readRegister(uint8_t register_address, uint8_t *data_buffer){
+HAL_StatusTypeDef I2C_Device::LLR_8Bits(uint8_t register_address, uint8_t *data_buffer){
 	return HAL_I2C_Mem_Read(
 			I2C_Device::_device_handle,
 			I2C_Device::_device_address,
@@ -33,7 +33,7 @@ HAL_StatusTypeDef I2C_Device::readRegister(uint8_t register_address, uint8_t *da
 			);
 }
 
-HAL_StatusTypeDef I2C_Device::readRegister2(uint8_t register_address, uint16_t *data_buffer){
+HAL_StatusTypeDef I2C_Device::LLR_16Bits(uint8_t register_address, uint16_t *data_buffer){
 	uint8_t buffer[2];
 
 	HAL_StatusTypeDef error = HAL_I2C_Mem_Read(
@@ -46,14 +46,14 @@ HAL_StatusTypeDef I2C_Device::readRegister2(uint8_t register_address, uint16_t *
 			I2C_Device::_response_delay
 			);
 
-	*data_buffer = concatBytes(buffer);
+	*data_buffer = I2C_Device::concat_8to16Bits(buffer);
 
 	return error;
 }
 
 
 
-HAL_StatusTypeDef I2C_Device::writeRegister(uint8_t register_address, uint8_t data_buffer){
+HAL_StatusTypeDef I2C_Device::LLW_8Bits(uint8_t register_address, uint8_t data_buffer){
 	return HAL_I2C_Mem_Write(
 			I2C_Device::_device_handle,
 			I2C_Device::_device_address,
@@ -65,9 +65,9 @@ HAL_StatusTypeDef I2C_Device::writeRegister(uint8_t register_address, uint8_t da
 			);
 }
 
-HAL_StatusTypeDef I2C_Device::writeRegister2(uint8_t register_address, uint16_t data_buffer){
+HAL_StatusTypeDef I2C_Device::LLW_16Bits(uint8_t register_address, uint16_t data_buffer){
 	uint8_t buffer[2];
-	breakBytes(data_buffer, buffer);
+	I2C_Device::break_16to8Bits(data_buffer, buffer);
 
 	HAL_StatusTypeDef error = HAL_I2C_Mem_Write(
 			I2C_Device::_device_handle,
@@ -105,7 +105,13 @@ bool I2C_Device::isConnected(void){
 
 // --- Utility methods for bit operations -----------------------------------------------
 
-uint8_t I2C_Device::maskByte(uint8_t data, uint8_t mask, bool invert_mask){
+uint8_t I2C_Device::mask_8Bits(uint8_t data, uint8_t mask, bool invert_mask){
+	if(invert_mask) return data & ~mask;
+
+	return data & mask;
+}
+
+uint16_t I2C_Device::mask_16Bits(uint16_t data, uint16_t mask, bool invert_mask){
 	if(invert_mask) return data & ~mask;
 
 	return data & mask;
@@ -113,11 +119,11 @@ uint8_t I2C_Device::maskByte(uint8_t data, uint8_t mask, bool invert_mask){
 
 
 
-uint16_t I2C_Device::concatBytes(uint8_t *bytes){
-	return ((bytes[0] & 0x0F) << 8) | bytes[1];
+uint16_t I2C_Device::concat_8to16Bits(uint8_t *bytes){
+	return ((bytes[0] & 0xFF) << 8) | bytes[1];
 }
 
-void I2C_Device::breakBytes(uint16_t bytes, uint8_t *result){
+void I2C_Device::break_16to8Bits(uint16_t bytes, uint8_t *result){
 	result[0] = (uint8_t)(bytes >> 8);
 	result[1] = (uint8_t)(bytes & 0xFF);
 }

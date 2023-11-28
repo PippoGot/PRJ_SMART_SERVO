@@ -22,6 +22,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "AS5600.hpp"
+#include "INA219.hpp"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -95,39 +96,15 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1); // start timer
+  AS5600 Encoder(&hi2c1);
 
-  AS5600 MagneticEncoder(&hi2c1); // init encoder
+  const float shunt_resistor = 0.1, max_expected_current = 3.0;	// Ohms, Amps
+  INA219 ShuntSensor(&hi2c1, max_expected_current, shunt_resistor);
 
-  uint16_t angle; // utility variables
+  uint16_t calibration = 0;
+  float current_reading_A = 0, current_reading_mA;
 
-  uint16_t duty = 102, max_duty = 513;
-  uint16_t steps = max_duty - duty;
-
-  uint16_t duty_vector[2 * steps];
-  //float output_vector[2 * steps];
-
-
-  __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, duty); // set duty
-
-
-  for(int i = duty; i < max_duty; i++){
-	  __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, i); // set duty
-
-	  HAL_Delay(500); // wait for motor to reach position
-
-	  duty_vector[i - duty] = MagneticEncoder.getAngle(); // acquire position
-  }
-
-
-  for(int i = duty; i < max_duty; i++){
-	  __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, max_duty - i + duty); // set duty
-
-	  HAL_Delay(500); // wait for motor to reach position
-
-	  duty_vector[i - duty + steps] = MagneticEncoder.getAngle(); // acquire position
-  }
-
-  HAL_Delay(1000);
+  bool connection;
 
   /* USER CODE END 2 */
 
@@ -136,6 +113,15 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
+
+	connection = ShuntSensor.isConnected();
+
+	calibration = ShuntSensor.getCalibration();
+
+	current_reading_A = ShuntSensor.getCurrent();
+	current_reading_mA = ShuntSensor.getCurrent_mA();
+
+	HAL_Delay(100);
 
     /* USER CODE BEGIN 3 */
   }
