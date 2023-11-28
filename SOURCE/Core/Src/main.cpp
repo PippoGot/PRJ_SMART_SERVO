@@ -98,18 +98,36 @@ int main(void)
 
   AS5600 MagneticEncoder(&hi2c1); // init encoder
 
-  float angle; // utility variables
-  uint16_t duty = 102, max_duty = 513;
+  uint16_t angle; // utility variables
 
-  //bool connection = MagneticEncoder.isConnected(); // connection test
+  uint16_t duty = 102, max_duty = 513;
+  uint16_t steps = max_duty - duty;
+
+  uint16_t duty_vector[2 * steps];
+  //float output_vector[2 * steps];
+
+
+  __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, duty); // set duty
+
 
   for(int i = duty; i < max_duty; i++){
-	  __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 4095 - i); // set duty
+	  __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, i); // set duty
 
 	  HAL_Delay(500); // wait for motor to reach position
 
-	  angle = MagneticEncoder.getRealAngle(AS5600_DEGREES); // read angle
+	  duty_vector[i - duty] = MagneticEncoder.getAngle(); // acquire position
   }
+
+
+  for(int i = duty; i < max_duty; i++){
+	  __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, max_duty - i + duty); // set duty
+
+	  HAL_Delay(500); // wait for motor to reach position
+
+	  duty_vector[i - duty + steps] = MagneticEncoder.getAngle(); // acquire position
+  }
+
+  HAL_Delay(1000);
 
   /* USER CODE END 2 */
 
@@ -217,9 +235,9 @@ static void MX_TIM1_Init(void)
 
   /* USER CODE END TIM1_Init 1 */
   htim1.Instance = TIM1;
-  htim1.Init.Prescaler = 0;
+  htim1.Init.Prescaler = 311;
   htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim1.Init.Period = 65535;
+  htim1.Init.Period = 4095;
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim1.Init.RepetitionCounter = 0;
   htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;

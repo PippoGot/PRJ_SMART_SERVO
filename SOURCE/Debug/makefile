@@ -21,6 +21,9 @@ endif
 ifneq ($(strip $(C++_DEPS)),)
 -include $(C++_DEPS)
 endif
+ifneq ($(strip $(CCM_DEPS)),)
+-include $(CCM_DEPS)
+endif
 ifneq ($(strip $(C_UPPER_DEPS)),)
 -include $(C_UPPER_DEPS)
 endif
@@ -32,6 +35,12 @@ ifneq ($(strip $(S_DEPS)),)
 endif
 ifneq ($(strip $(S_UPPER_DEPS)),)
 -include $(S_UPPER_DEPS)
+endif
+ifneq ($(strip $(CXXM_DEPS)),)
+-include $(CXXM_DEPS)
+endif
+ifneq ($(strip $(C++M_DEPS)),)
+-include $(C++M_DEPS)
 endif
 ifneq ($(strip $(C_DEPS)),)
 -include $(C_DEPS)
@@ -75,8 +84,8 @@ all: main-build
 main-build: Smart\ Servo\ Code.elf secondary-outputs
 
 # Tool invocations
-Smart\ Servo\ Code.elf Smart\ Servo\ Code.map: $(OBJS) $(USER_OBJS) C:\Users\berti\Documents\GitHub\PRJ_SMART_SERVO\SOURCE\STM32F103C8TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-g++ -o "Smart Servo Code.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"C:\Users\berti\Documents\GitHub\PRJ_SMART_SERVO\SOURCE\STM32F103C8TX_FLASH.ld" -Wl,-Map="Smart Servo Code.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
+Smart\ Servo\ Code.elf Smart\ Servo\ Code.map: $(OBJS) $(USER_OBJS) D:\Data\_PROGETTI\PRJ_SMART_SERVO\SOURCE\STM32F103C8TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-g++ -o "Smart Servo Code.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"D:\Data\_PROGETTI\PRJ_SMART_SERVO\SOURCE\STM32F103C8TX_FLASH.ld" -Wl,-Map="Smart Servo Code.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

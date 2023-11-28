@@ -4,6 +4,11 @@
 ################################################################################
 
 # Add inputs and outputs from these tool invocations to the build variables 
+CPP_SRCS += \
+../Core/Src/AS5600.cpp \
+../Core/Src/i2c_device.cpp \
+../Core/Src/main.cpp 
+
 C_SRCS += \
 ../Core/Src/main.c \
 ../Core/Src/stm32f1xx_hal_msp.c \
@@ -11,11 +16,6 @@ C_SRCS += \
 ../Core/Src/syscalls.c \
 ../Core/Src/sysmem.c \
 ../Core/Src/system_stm32f1xx.c 
-
-CPP_SRCS += \
-../Core/Src/AS5600.cpp \
-../Core/Src/i2c_device.cpp \
-../Core/Src/main.cpp 
 
 C_DEPS += \
 ./Core/Src/main.d \
