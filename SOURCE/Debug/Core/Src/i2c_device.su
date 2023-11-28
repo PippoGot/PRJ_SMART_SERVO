@@ -1,0 +1,9 @@
+../Core/Src/i2c_device.cpp:14:1:I2C_Device::I2C_Device(I2C_HandleTypeDef*, uint8_t, uint32_t)	24	static
+../Core/Src/i2c_device.cpp:24:19:HAL_StatusTypeDef I2C_Device::readRegister(uint8_t, uint8_t*)	40	static
+../Core/Src/i2c_device.cpp:36:19:HAL_StatusTypeDef I2C_Device::readRegister2(uint8_t, uint16_t*)	48	static
+../Core/Src/i2c_device.cpp:56:19:HAL_StatusTypeDef I2C_Device::writeRegister(uint8_t, uint8_t)	32	static
+../Core/Src/i2c_device.cpp:68:19:HAL_StatusTypeDef I2C_Device::writeRegister2(uint8_t, uint16_t)	40	static
+../Core/Src/i2c_device.cpp:89:6:bool I2C_Device::isConnected()	24	static
+../Core/Src/i2c_device.cpp:108:9:uint8_t I2C_Device::maskByte(uint8_t, uint8_t, bool)	16	static
+../Core/Src/i2c_device.cpp:116:10:uint16_t I2C_Device::concatBytes(uint8_t*)	16	static
+../Core/Src/i2c_device.cpp:120:6:void I2C_Device::breakBytes(uint16_t, uint8_t*)	24	static
