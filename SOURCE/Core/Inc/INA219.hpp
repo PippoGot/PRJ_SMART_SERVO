@@ -13,7 +13,7 @@
 
 // --- Device default address -----------------------------------------------------------
 
-// Refer to data-sheet page 14 for more details
+// See data-sheet page 14, table 1 for more details on address options
 
 const uint8_t INA219_DEFAULT_ADDRESS = 0x40;
 
@@ -25,6 +25,8 @@ class INA219 : public I2C_Device {
 
 public:
 	// --- Miscellaneous sensor options -------------------------------------------------
+
+	// Empty for now
 
 
 	// --- Device constructor -----------------------------------------------------------
@@ -96,12 +98,14 @@ public:
 
 	// --- Sensor configuration options -------------------------------------------------
 
-	// Refer to data-sheet page 19 and following for more details
+	// See data-sheet page 19, table 3 for more details on configuration
 
 	enum BUS_VOLTAGE_RANGE : uint16_t {		// Bus voltage ranges (defaults to 32 V)
 		RANGE_16V_FSR	= 0x00 << 13,		// 16 volts
 		RANGE_32V_FSR 	= 0x01 << 13,		// 32 volts
 	};
+
+	// See data-sheet page 19, table 4 for more details on configuration
 
 	enum PGA : uint16_t {					// PGA gain and range (defaults to 320 mV)
 		PGA_40mV 	= 0x00 << 11,			// /1, +- 40 mV
@@ -109,6 +113,8 @@ public:
 		PGA_160mV 	= 0x02 << 11,			// /4, +- 160 mV
 		PGA_320mV	= 0x03 << 11,			// /8, +- 320 mV
 	};
+
+	// See data-sheet page 19, table 5 for more details on configuration
 
 	enum BUS_ADC_RESOLUTION : uint16_t {	// ADC resolution or number of samples (defaults to 12 bits)
 		BUS_ADC_9_BITS 		= 0x00 << 7,	// 9 bits, 84 us conversion time
@@ -124,6 +130,8 @@ public:
 		BUS_ADC_128_SMPL 	= 0x0F << 7,	// 128 samples, 68.1 ms conversion time
 	};
 
+	// See data-sheet page 19, table 5 for more details on configuration
+
 	enum SHUNT_ADC_RESOLUTION : uint16_t {	// ADC resolution or number of samples (defaults to 12 bits)
 		SHUNT_ADC_9_BITS 	= 0x00 << 3,	// 9 bits, 84 us conversion time
 		SHUNT_ADC_10_BITS 	= 0x01 << 3,	// 10 bits, 148 us conversion time
@@ -137,6 +145,8 @@ public:
 		SHUNT_ADC_64_SMPL 	= 0x0E << 3,	// 64 samples, 34.05 ms conversion time
 		SHUNT_ADC_128_SMPL 	= 0x0F << 3,	// 128 samples, 68.1 ms conversion time
 	};
+
+	// See data-sheet page 19, table 6 for more details on configuration
 
 	enum OPERATING_MODE : uint16_t {		// Continuous, triggered or power-down (defaults to both continuous)
 		POWER_DOWN 			= 0x00 << 0,
@@ -195,7 +205,7 @@ protected:
 
 	// --- Sensor register map ----------------------------------------------------------
 
-	// Refer to data-sheet page 18 for more details
+	// See data-sheet page 18, table 2 for more details on registers map
 
 	enum REGISTER : uint8_t {
 		CONF 			= 0x00,
@@ -211,6 +221,8 @@ protected:
 
 	// --- Configuration bits masks
 
+	// See data-sheet page 19 for more details on configuration bits
+
 	const uint16_t RESET_MASK					= 0x8000;
 	const uint16_t BUS_VOLTAGE_RANGE_MASK    	= 0x2000;
 	const uint16_t PGA_MASK    					= 0x1800;
@@ -221,8 +233,12 @@ protected:
 
 	// --- Bus voltage register bits masks
 
+	// See data-sheet page 23 for more details on bus voltage flag bits
+
 	const uint16_t BUS_REGISTER_FLAGS_MASK 		= 0x0003;
 	const uint16_t BUS_REGISTER_CNVR_MASK		= 0x0002;
 	const uint16_t BUS_REGISTER_OVF_MASK		= 0x0001;
 };
 
+
+// END OF FILE
