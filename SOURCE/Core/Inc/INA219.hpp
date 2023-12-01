@@ -162,7 +162,8 @@ public:
 
 	// --- Sensor configuration methods -------------------------------------------------
 
-	// --- General configuration // TODO better management
+	// --- General configuration
+	// TODO better management
 
 	bool setConfiguration(uint16_t value);
 	uint16_t getConfiguration(void);
@@ -189,13 +190,14 @@ public:
 	// --- Miscellaneous methods --------------------------------------------------------
 
 	bool reset(void);
+
 	bool shutDown(void){ return INA219::setOperatingMode(INA219::POWER_DOWN); };
 
 
 protected:
 	// --- Device variables -------------------------------------------------------------
 
-	// SENSOR_MODE _sensor_mode; // TODO implement maybe ? current/voltage sensor
+	// SENSOR_MODE _sensor_mode; // TODO implement ??? current/voltage sensor
 
 	float _shunt_resistor;
 	float _max_expected_current;

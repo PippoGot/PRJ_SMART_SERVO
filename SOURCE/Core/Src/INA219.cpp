@@ -32,6 +32,7 @@ uint32_t response_delay
 ) :
 		I2C_Device(device_handle, device_address, response_delay)
 	{
+		// Calibrate sensor with given current and resistor values
 		INA219::calibrateSensor(max_expected_current, shunt_resistor);
 	}
 
@@ -215,11 +216,11 @@ uint16_t INA219::getCalibration(void){
 // --- General configuration
 
 /*
- * @brief Sets the configuration register to the given value, returns success of operation.
+ * @brief Sets the configuration register to the given value.
  * (See data-sheet page 19 and 20 for more details on configuration)
  * TODO remove or improve !!!
  *
- * @param value		The configuration to set;
+ * @param value	The configuration to set;
  *
  */
 bool INA219::setConfiguration(uint16_t value){
@@ -227,12 +228,12 @@ bool INA219::setConfiguration(uint16_t value){
 	HAL_StatusTypeDef error = INA219::LLW_16Bits(INA219::CONF, value);
 	if(error == HAL_OK) return true;
 
-	// Return failure
+	// Return failure as default
 	return false;
 }
 
 /*
- * @brief Gets the configuration register.
+ * @brief Gets the value in the configuration register.
  * (See data-sheet page 19 and 20 for more details on configuration)
  * TODO cache the configuration for faster reading ???
  */
@@ -267,7 +268,7 @@ bool INA219::setBusVoltageRange(INA219::BUS_VOLTAGE_RANGE option){
 	error = INA219::LLW_16Bits(INA219::CONF, previous_configuration);
 	if(error == HAL_OK) return true;
 
-	// Return failure
+	// Return failure as default
 	return false;
 }
 
@@ -308,7 +309,7 @@ bool INA219::setPGA(INA219::PGA option){
 	error = INA219::LLW_16Bits(INA219::CONF, previous_configuration);
 	if(error == HAL_OK) return true;
 
-	// Return failure
+	// Return failure as default
 	return false;
 }
 
@@ -349,7 +350,7 @@ bool INA219::setBusADCResolution(INA219::BUS_ADC_RESOLUTION option){
 	error = INA219::LLW_16Bits(INA219::CONF, previous_configuration);
 	if(error == HAL_OK) return true;
 
-	// Return failure
+	// Return failure as default
 	return false;
 }
 
@@ -390,7 +391,7 @@ bool INA219::setShuntADCResolution(INA219::SHUNT_ADC_RESOLUTION option){
 	error = INA219::LLW_16Bits(INA219::CONF, previous_configuration);
 	if(error == HAL_OK) return true;
 
-	// Return failure
+	// Return failure as default
 	return false;
 }
 
@@ -431,7 +432,7 @@ bool INA219::setOperatingMode(INA219::OPERATING_MODE option){
 	error = INA219::LLW_16Bits(INA219::CONF, previous_configuration);
 	if(error == HAL_OK) return true;
 
-	// Return failure
+	// Return failure as default
 	return false;
 }
 
@@ -465,7 +466,7 @@ bool INA219::reset(void){
 	HAL_StatusTypeDef error = INA219::LLW_16Bits(INA219::CONF, INA219::RESET_MASK);
 	if(error == HAL_OK) return true;
 
-	// Return failure
+	// Return failure as default
 	return false;
 }
 
