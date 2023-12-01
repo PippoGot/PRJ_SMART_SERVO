@@ -1,24 +1,27 @@
-../Core/Src/INA219.cpp:16:1:INA219::INA219(I2C_HandleTypeDef*, float, float, uint8_t, uint32_t)	24	static
-../Core/Src/INA219.cpp:33:9:int16_t INA219::getRawBusVoltage()	24	static
-../Core/Src/INA219.cpp:40:9:int16_t INA219::getRawShuntVoltage()	24	static
-../Core/Src/INA219.cpp:47:9:int16_t INA219::getRawCurrent()	24	static
-../Core/Src/INA219.cpp:56:9:int16_t INA219::getRawPower()	24	static
-../Core/Src/INA219.cpp:68:7:float INA219::getBusVoltage()	24	static
-../Core/Src/INA219.cpp:79:7:float INA219::getShuntVoltage()	24	static
-../Core/Src/INA219.cpp:86:7:float INA219::getCurrent()	24	static
-../Core/Src/INA219.cpp:95:7:float INA219::getPower()	24	static
-../Core/Src/INA219.cpp:107:6:void INA219::calibrateSensor(float, float)	32	static
-../Core/Src/INA219.cpp:118:10:uint16_t INA219::getCalibration()	24	static
-../Core/Src/INA219.cpp:133:6:bool INA219::setConfiguration(uint16_t)	24	static
-../Core/Src/INA219.cpp:140:10:uint16_t INA219::getConfiguration()	24	static
-../Core/Src/INA219.cpp:150:6:bool INA219::setBusVoltageRange(INA219::BUS_VOLTAGE_RANGE)	24	static
-../Core/Src/INA219.cpp:164:27:INA219::BUS_VOLTAGE_RANGE INA219::getBusVoltageRange()	24	static
-../Core/Src/INA219.cpp:174:6:bool INA219::setPGA(INA219::PGA)	24	static
-../Core/Src/INA219.cpp:188:13:INA219::PGA INA219::getPGA()	24	static
-../Core/Src/INA219.cpp:198:6:bool INA219::setBusADCResolution(INA219::BUS_ADC_RESOLUTION)	24	static
-../Core/Src/INA219.cpp:212:28:INA219::BUS_ADC_RESOLUTION INA219::getBusADCResolution()	24	static
-../Core/Src/INA219.cpp:222:6:bool INA219::setShuntADCResolution(INA219::SHUNT_ADC_RESOLUTION)	24	static
-../Core/Src/INA219.cpp:236:30:INA219::SHUNT_ADC_RESOLUTION INA219::getShuntADCResolution()	24	static
-../Core/Src/INA219.cpp:246:6:bool INA219::setOperatingMode(INA219::OPERATING_MODE)	24	static
-../Core/Src/INA219.cpp:260:24:INA219::OPERATING_MODE INA219::getOperatingMode()	24	static
-../Core/Src/INA219.cpp:272:6:bool INA219::reset()	24	static
+../Core/Src/INA219.cpp:28:1:INA219::INA219(I2C_HandleTypeDef*, float, float, uint8_t, uint32_t)	24	static
+../Core/Src/INA219.cpp:58:1:INA219::INA219(I2C_HandleTypeDef*, float, float, float, uint8_t, uint32_t)	24	static
+../Core/Src/INA219.cpp:85:9:int16_t INA219::getRawBusVoltage()	24	static
+../Core/Src/INA219.cpp:98:9:int16_t INA219::getRawShuntVoltage()	24	static
+../Core/Src/INA219.cpp:111:9:int16_t INA219::getRawCurrent()	24	static
+../Core/Src/INA219.cpp:132:9:int16_t INA219::getRawPower()	24	static
+../Core/Src/INA219.cpp:156:7:float INA219::getBusVoltage_V()	24	static
+../Core/Src/INA219.cpp:173:7:float INA219::getShuntVoltage_V()	24	static
+../Core/Src/INA219.cpp:187:7:float INA219::getVoltage_V()	24	static
+../Core/Src/INA219.cpp:202:7:float INA219::getCurrent_A()	24	static
+../Core/Src/INA219.cpp:223:7:float INA219::getPower_W()	24	static
+../Core/Src/INA219.cpp:250:6:void INA219::calibrateSensor(float, float)	32	static
+../Core/Src/INA219.cpp:282:6:void INA219::calibrateSensor(float, float, float)	32	static
+../Core/Src/INA219.cpp:310:10:uint16_t INA219::getCalibration()	24	static
+../Core/Src/INA219.cpp:337:6:bool INA219::setConfiguration(uint16_t)	24	static
+../Core/Src/INA219.cpp:351:10:uint16_t INA219::getConfiguration()	24	static
+../Core/Src/INA219.cpp:368:6:bool INA219::setBusVoltageRange(INA219::BUS_VOLTAGE_RANGE)	24	static
+../Core/Src/INA219.cpp:391:27:INA219::BUS_VOLTAGE_RANGE INA219::getBusVoltageRange()	24	static
+../Core/Src/INA219.cpp:409:6:bool INA219::setPGA(INA219::PGA)	24	static
+../Core/Src/INA219.cpp:432:13:INA219::PGA INA219::getPGA()	24	static
+../Core/Src/INA219.cpp:450:6:bool INA219::setBusADCResolution(INA219::BUS_ADC_RESOLUTION)	24	static
+../Core/Src/INA219.cpp:473:28:INA219::BUS_ADC_RESOLUTION INA219::getBusADCResolution()	24	static
+../Core/Src/INA219.cpp:491:6:bool INA219::setShuntADCResolution(INA219::SHUNT_ADC_RESOLUTION)	24	static
+../Core/Src/INA219.cpp:514:30:INA219::SHUNT_ADC_RESOLUTION INA219::getShuntADCResolution()	24	static
+../Core/Src/INA219.cpp:532:6:bool INA219::setOperatingMode(INA219::OPERATING_MODE)	24	static
+../Core/Src/INA219.cpp:555:24:INA219::OPERATING_MODE INA219::getOperatingMode()	24	static
+../Core/Src/INA219.cpp:575:6:bool INA219::reset()	24	static

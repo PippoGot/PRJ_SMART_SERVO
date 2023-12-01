@@ -26,15 +26,32 @@ class INA219 : public I2C_Device {
 public:
 	// --- Miscellaneous sensor options -------------------------------------------------
 
-	// Empty for now
+	enum SENSOR_MODE : uint8_t {	// Sensor type mode
+		SENS_CURRENT = 0X00,		// Current sensor through shunt resistor
+		SENS_VOLTAGE = 0X01,		// Voltage sensor through voltage divider
+	};
 
 
-	// --- Device constructor -----------------------------------------------------------
+	// --- Device constructors ----------------------------------------------------------
+
+	// --- Current sensor constructor
 
 	INA219(
 			I2C_HandleTypeDef *device_handle,
 			float max_expected_current,
 			float shunt_resistor,
+			uint8_t device_address = INA219_DEFAULT_ADDRESS,
+			uint32_t response_delay = HAL_MAX_DELAY
+			);
+
+
+	// --- Voltage sensor constructor
+
+	INA219(
+			I2C_HandleTypeDef *device_handle,
+			float max_expected_voltage,
+			float high_resistor,
+			float low_resistor,
 			uint8_t device_address = INA219_DEFAULT_ADDRESS,
 			uint32_t response_delay = HAL_MAX_DELAY
 			);
@@ -52,42 +69,61 @@ public:
 
 	// --- Sensor readings
 
-	float getBusVoltage(void);
-	float getShuntVoltage(void);
-	float getCurrent(void);
-	float getPower(void);
+	float getBusVoltage_V(void);
+
+	float getShuntVoltage_V(void);
+
+	float getVoltage_V(void);
+
+	float getCurrent_A(void);
+
+	float getPower_W(void);
 
 
-	// --- Calibration and parameters
+	// --- Calibration
 
 	void calibrateSensor(float max_expected_current, float shunt_resistor);
+	void calibrateSensor(float max_expected_voltage, float high_resistor, float low_resistor);
+
 	uint16_t getCalibration(void);
 
 
-	float getMaxCurrent(){ return _max_expected_current; };
-	float getShuntResistor(void){ return _shunt_resistor; }
-	float getCurrentLSB(void){ return _current_lsb; };
-	float getPowerLSB(void){ return _power_lsb; };
+	// --- Sensor Parameters
+
+	float getMaxCurrent(void){ return _max_expected_current; };
+	float getShuntResistor(void){ return _shunt_resistor; };
+
+	float getMaxVoltage(void){ return _max_expected_voltage; };
+	float getHighResistor(void){ return _high_resistor; };
+	float getLowResistor(void){ return _low_resistor; };
+
+	SENSOR_MODE getSensorMode(void){ return _sensor_mode; };
 
 
 	// --- Sensor utility methods -------------------------------------------------------
 
 	// ---  Sensor readings (smaller measurement units)
 
-	float getBusVoltage_mV(void){ return getBusVoltage() * 1e3; };
-	float getBusVoltage_uV(void){ return getBusVoltage() * 1e6; };
+	float getBusVoltage_mV(void){ return getBusVoltage_V() * 1e3; };
+	float getBusVoltage_uV(void){ return getBusVoltage_V() * 1e6; };
 
-	float getShuntVoltage_mV(void){ return getShuntVoltage() * 1e3; };
-	float getShuntVoltage_uV(void){ return getShuntVoltage() * 1e6; };
+	float getShuntVoltage_mV(void){ return getShuntVoltage_V() * 1e3; };
+	float getShuntVoltage_uV(void){ return getShuntVoltage_V() * 1e6; };
 
-	float getCurrent_mA(void){ return getCurrent() * 1e3; };
-	float getCurrent_uA(void){ return getCurrent() * 1e6; };
+	float getVoltage_mV(void){ return getVoltage_V() * 1e3; };
+	float getVoltage_uV(void){ return getVoltage_V() * 1e6; };
 
-	float getPower_mW(void){ return getPower() * 1e3; };
-	float getPower_uW(void){ return getPower() * 1e6; };
+	float getCurrent_mA(void){ return getCurrent_A() * 1e3; };
+	float getCurrent_uA(void){ return getCurrent_A() * 1e6; };
+
+	float getPower_mW(void){ return getPower_W() * 1e3; };
+	float getPower_uW(void){ return getPower_W() * 1e6; };
 
 
-	// --- Calibration and parameters (smaller measurement units)
+	// --- LSB getters
+
+	float getCurrentLSB(void){ return _current_lsb; };
+	float getPowerLSB(void){ return _power_lsb; };
 
 	float getCurrentLSB_mA(void){ return _current_lsb * 1e3; };
 	float getCurrentLSB_uA(void){ return _current_lsb * 1e6; };
@@ -197,12 +233,18 @@ public:
 protected:
 	// --- Device variables -------------------------------------------------------------
 
-	// SENSOR_MODE _sensor_mode; // TODO implement ??? current/voltage sensor
-
-	float _shunt_resistor;
 	float _max_expected_current;
+	float _shunt_resistor;
+
+	float _max_expected_voltage;
+	float _low_resistor;
+	float _high_resistor;
+	float _total_resistor;
+
 	float _current_lsb;
 	float _power_lsb;
+
+	SENSOR_MODE _sensor_mode;
 
 
 	// --- Sensor register map ----------------------------------------------------------

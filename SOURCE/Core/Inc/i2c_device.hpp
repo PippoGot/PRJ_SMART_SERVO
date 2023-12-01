@@ -44,9 +44,9 @@ public:
 protected:
 	// --- Variables --------------------------------------------------------------------
 
-	I2C_HandleTypeDef *_device_handle;	// Bus to which the device is connected to
-	const uint8_t _device_address; 		// I2C address of the device
-	const uint32_t _response_delay;		// Response delay used in read-write operations
+	I2C_HandleTypeDef *_device_handle;
+	const uint8_t _device_address;
+	const uint32_t _response_delay;
 
 
 	// --- Low-level I2C methods --------------------------------------------------------
