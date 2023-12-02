@@ -57,13 +57,11 @@ static void MX_TIM1_Init(void);
 static void MX_I2C1_Init(void);
 /* USER CODE BEGIN PFP */
 
-float current_reading_A = 0;
+float i1 = 0, i2 = 0, i = 0;
 
-float voltage_reading_V = 0, shunt_voltage_mV = 0;
+float v_bus1 = 0, v_bus2 = 0, v = 0;
 
-float angle_reading_deg = 0;
-
-uint16_t angle_reading_ADC = 0;
+float angle = 0;
 
 /* USER CODE END PFP */
 
@@ -81,10 +79,8 @@ int main(void)
 	AS5600 Encoder(&hi2c1, 0x36, AS5600::CLOCK_WISE, 0x01);
 
 	const float shunt_resistor = 0.1, max_expected_current = 3.0;	// Ohms, Amps
-	INA219 CurrentSensor(&hi2c1, max_expected_current, shunt_resistor);
-
-	const float high_resistor = 1e5, low_resistor = 1e3, max_expected_voltage = 6.0; // Ohms, Ohms, Volts
-	INA219 VoltageSensor(&hi2c1, max_expected_voltage, high_resistor, low_resistor, 0x44);
+	INA219 CurrentSensor1(&hi2c1, max_expected_current, shunt_resistor, 0x40, 0x01);
+	INA219 CurrentSensor2(&hi2c1, max_expected_current, shunt_resistor, 0x44, 0x01);
 
   /* USER CODE END 1 */
 
@@ -118,10 +114,19 @@ int main(void)
   {
     /* USER CODE END WHILE */
 
-	current_reading_A = CurrentSensor.getCurrent_A();
-	shunt_voltage_mV = VoltageSensor.getShuntVoltage_V();
-	voltage_reading_V = VoltageSensor.getVoltage_V();
-	angle_reading_deg = Encoder.getRealAngle(AS5600::DEGREES);
+
+	bool connected = CurrentSensor1.isConnected();
+	connected = CurrentSensor2.isConnected();
+
+	i1 = CurrentSensor1.getCurrent_A();
+	i2 = CurrentSensor2.getCurrent_A();
+	i = (i1 - i2) / 2;
+
+	v_bus1 = CurrentSensor1.getBusVoltage_V();
+	v_bus2 = CurrentSensor2.getBusVoltage_V();
+	v = (v_bus2 - v_bus1);
+
+	angle = Encoder.getRealAngle(AS5600::DEGREES);
 
 	HAL_Delay(1);
 

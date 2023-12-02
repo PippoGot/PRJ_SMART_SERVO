@@ -13,8 +13,6 @@
 
 // --- Device constructors --------------------------------------------------------------
 
-// --- Current sensor constructor
-
 /*
  * @brief Constructor for an INA219 current sensor.
  *
@@ -34,49 +32,14 @@ uint32_t response_delay
 ) :
 		I2C_Device(device_handle, device_address, response_delay)
 	{
-		// Set the current sensor mode for this instance
-		INA219::_sensor_mode = INA219::SENS_CURRENT;
-
 		// Calibrate sensor with given current and resistor values
 		INA219::calibrateSensor(max_expected_current, shunt_resistor);
-	}
-
-
-// --- Voltage sensor constructor
-
-/*
- * @brief Constructor for an INA219 voltage sensor.
- *
- * @param device_handle 		I2C bus handle object;
- * @param max_expexted_voltage 	Value of highest voltage expected at the voltage divider;
- * @oaram high_resistor 		Value of resistor used to reduce voltage;
- * @oaram low_resistor 			Value of resistor used to measure voltage;
- * @param device_address		Address of the I2C device;
- * @param response_delay		Time to wait for the device response;
- *
- */
-INA219::INA219(
-I2C_HandleTypeDef *device_handle,
-float max_expected_voltage,
-float high_resistor,
-float low_resistor,
-uint8_t device_address,
-uint32_t response_delay
-) :
-		I2C_Device(device_handle, device_address, response_delay)
-	{
-		// Set the current sensor mode for this instance
-		INA219::_sensor_mode = INA219::SENS_VOLTAGE;
-
-		// Calibrate sensor with given current and resistor values
-		INA219::calibrateSensor(max_expected_voltage, high_resistor, low_resistor);
 	}
 
 
 // --- Sensor core methods --------------------------------------------------------------
 
 // --- Raw sensor readings
-
 
 /*
  * @brief Gets the content of the bus voltage register, without flag bits.
@@ -110,12 +73,7 @@ int16_t INA219::getRawShuntVoltage(void){
  */
 int16_t INA219::getRawCurrent(void){
 	// Re-calibration to avoid problems (based on Adafruit library)
-	if(INA219::_sensor_mode == SENS_CURRENT) {
-		INA219::calibrateSensor(INA219::_max_expected_current, INA219::_shunt_resistor);
-	}
-	else {
-		INA219::calibrateSensor(INA219::_max_expected_voltage, INA219::_high_resistor, INA219::_low_resistor);
-	}
+	INA219::calibrateSensor(INA219::_max_expected_current, INA219::_shunt_resistor);
 
 	// Read the register
 	uint16_t register_content;
@@ -131,12 +89,7 @@ int16_t INA219::getRawCurrent(void){
  */
 int16_t INA219::getRawPower(void){
 	// Re-calibration to avoid problems (based on Adafruit library)
-	if(INA219::_sensor_mode == SENS_CURRENT) {
-		INA219::calibrateSensor(INA219::_max_expected_current, INA219::_shunt_resistor);
-	}
-	else {
-		INA219::calibrateSensor(INA219::_max_expected_voltage, INA219::_high_resistor, INA219::_low_resistor);
-	}
+	INA219::calibrateSensor(INA219::_max_expected_current, INA219::_shunt_resistor);
 
 	// Read the register
 	uint16_t register_content;
@@ -180,33 +133,12 @@ float INA219::getShuntVoltage_V(void){
 }
 
 /*
- * @brief Returns the sensed voltage after proper conversion.
- * If sensor is in current mode return 0.
- *
- */
-float INA219::getVoltage_V(void){
-	// Check sensor mode is right
-	if(INA219::_sensor_mode == SENS_CURRENT) return 0;
-
-	// Get the sensed current
-	float current = INA219::getCurrent_A();
-
-	// Convert it to voltage then return result
-	return current * INA219::_total_resistor;
-}
-
-/*
  * @brief Return the sensed current after proper conversion.
  *
  */
 float INA219::getCurrent_A(void){
 	// Re-calibration to avoid problems (based on Adafruit library)
-	if(INA219::_sensor_mode == SENS_CURRENT) {
-		INA219::calibrateSensor(INA219::_max_expected_current, INA219::_shunt_resistor);
-	}
-	else {
-		INA219::calibrateSensor(INA219::_max_expected_voltage, INA219::_high_resistor, INA219::_low_resistor);
-	}
+	INA219::calibrateSensor(INA219::_max_expected_current, INA219::_shunt_resistor);
 
 	// Read the register
 	uint16_t register_content;
@@ -222,12 +154,7 @@ float INA219::getCurrent_A(void){
  */
 float INA219::getPower_W(void){
 	// Re-calibration to avoid problems (based on Adafruit library)
-	if(INA219::_sensor_mode == SENS_CURRENT) {
-		INA219::calibrateSensor(INA219::_max_expected_current, INA219::_shunt_resistor);
-	}
-	else {
-		INA219::calibrateSensor(INA219::_max_expected_voltage, INA219::_high_resistor, INA219::_low_resistor);
-	}
+	INA219::calibrateSensor(INA219::_max_expected_current, INA219::_shunt_resistor);
 
 	// Read the register
 	uint16_t register_content;
@@ -248,49 +175,9 @@ float INA219::getPower_W(void){
  *
  */
 void INA219::calibrateSensor(float max_expected_current, float shunt_resistor){
-	// Check sensor mode is right
-	if(INA219::_sensor_mode == SENS_VOLTAGE) return;
-
 	// Updates variables
 	INA219::_max_expected_current = max_expected_current;
 	INA219::_shunt_resistor = shunt_resistor;
-
-	INA219::_max_expected_voltage = 0;
-	INA219::_high_resistor = 0;
-	INA219::_low_resistor = 0;
-	INA219::_total_resistor = 0;
-
-	// Compute LSBs (see data-sheet page 12, equations 2 and 3)
-	INA219::_current_lsb = INA219::_max_expected_current / 32768;
-	INA219::_power_lsb = 20 * INA219::_current_lsb;
-
-	// Compute calibration value (see data-sheet page 12, equation 1)
-	uint16_t calibration_value = (uint16_t)(0.04096 / (INA219::_current_lsb * INA219::_shunt_resistor));
-
-	// Write computed calibration value
-	INA219::LLW_16Bits(INA219::CALIBRATION, calibration_value);
-}
-
-/*
- * @brief Sets the calibration register based on the given parameters.
- *
- * @param max_expected_voltage	Value of the highest voltage expected at voltage divider;
- * @param high_resistor			Value of resistor in the high side of voltage divider;
- * @param low_resistor			Value of resistor in the low side of voltage divider;
- *
- */
-void INA219::calibrateSensor(float max_expected_voltage, float high_resistor, float low_resistor){
-	// Check sensor mode is right
-	if(INA219::_sensor_mode == SENS_CURRENT) return;
-
-	// Updates variables
-	INA219::_max_expected_voltage = max_expected_voltage;
-	INA219::_high_resistor = high_resistor;
-	INA219::_low_resistor = low_resistor;
-	INA219::_total_resistor = INA219::_low_resistor + INA219::_high_resistor;
-
-	INA219::_max_expected_current = INA219::_max_expected_voltage / INA219::_total_resistor;
-	INA219::_shunt_resistor = INA219::_low_resistor;
 
 	// Compute LSBs (see data-sheet page 12, equations 2 and 3)
 	INA219::_current_lsb = INA219::_max_expected_current / 32768;
