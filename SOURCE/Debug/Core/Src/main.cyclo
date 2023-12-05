@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 ../Core/Src/main.cpp:69:5:int main()	3
 ../Core/Src/main.cpp:149:6:void SystemClock_Config()	3
 ../Core/Src/main.cpp:188:13:void MX_I2C1_Init()	2
@@ -13,4 +14,14 @@
 ../Core/Src/main.cpp:207:13:void MX_TIM1_Init()	8
 ../Core/Src/main.cpp:286:13:void MX_GPIO_Init()	1
 ../Core/Src/main.cpp:308:6:void Error_Handler()	1
+>>>>>>> code
+=======
+../Drivers/CMSIS/Include/core_cm3.h:1876:26:uint32_t ITM_SendChar(uint32_t)	5
+../Core/Src/main.cpp:76:5:int main()	1
+../Core/Src/main.cpp:142:6:void SystemClock_Config()	3
+../Core/Src/main.cpp:181:13:void MX_I2C1_Init()	2
+../Core/Src/main.cpp:215:13:void MX_TIM1_Init()	8
+../Core/Src/main.cpp:294:13:void MX_GPIO_Init()	1
+../Core/Src/main.cpp:309:5:int _write(int, char*, int)	2
+../Core/Src/main.cpp:326:6:void Error_Handler()	1
 >>>>>>> code

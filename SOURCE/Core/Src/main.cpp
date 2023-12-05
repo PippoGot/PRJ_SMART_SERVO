@@ -47,6 +47,7 @@ TIM_HandleTypeDef htim1;
 
 /* USER CODE BEGIN PV */
 
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -56,11 +57,16 @@ static void MX_TIM1_Init(void);
 static void MX_I2C1_Init(void);
 /* USER CODE BEGIN PFP */
 
+float i1 = 0, i2 = 0, i = 0;
+
+float v_bus1 = 0, v_bus2 = 0, v = 0;
+
+float angle = 0;
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
 /* USER CODE END 0 */
 
 /**
@@ -70,6 +76,11 @@ static void MX_I2C1_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
+	AS5600 Encoder(&hi2c1, 0x36, AS5600::CLOCK_WISE, 0x01);
+
+	const float shunt_resistor = 0.1, max_expected_current = 3.0;	// Ohms, Amps
+	INA219 CurrentSensor1(&hi2c1, max_expected_current, shunt_resistor, 0x40, 0x01);
+	INA219 CurrentSensor2(&hi2c1, max_expected_current, shunt_resistor, 0x44, 0x01);
 
   /* USER CODE END 1 */
 
@@ -95,17 +106,6 @@ int main(void)
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
 
-  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1); // start timer
-  AS5600 Encoder(&hi2c1);
-
-  const float shunt_resistor = 0.1, max_expected_current = 3.0;	// Ohms, Amps
-  INA219 ShuntSensor(&hi2c1, max_expected_current, shunt_resistor);
-
-  uint16_t calibration = 0;
-  float current_reading_A = 0, current_reading_mA;
-
-  bool connection;
-
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -114,14 +114,21 @@ int main(void)
   {
     /* USER CODE END WHILE */
 
-	connection = ShuntSensor.isConnected();
 
-	calibration = ShuntSensor.getCalibration();
+	bool connected = CurrentSensor1.isConnected();
+	connected = CurrentSensor2.isConnected();
 
-	current_reading_A = ShuntSensor.getCurrent();
-	current_reading_mA = ShuntSensor.getCurrent_mA();
+	i1 = CurrentSensor1.getCurrent_A();
+	i2 = CurrentSensor2.getCurrent_A();
+	i = (i1 - i2) / 2;
 
-	HAL_Delay(100);
+	v_bus1 = CurrentSensor1.getBusVoltage_V();
+	v_bus2 = CurrentSensor2.getBusVoltage_V();
+	v = (v_bus2 - v_bus1);
+
+	angle = Encoder.getRealAngle(AS5600::DEGREES);
+
+	HAL_Delay(1);
 
     /* USER CODE BEGIN 3 */
   }
@@ -299,7 +306,17 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+int _write(int file, char *ptr, int len)
+{
+  (void)file;
+  int DataIdx;
 
+  for (DataIdx = 0; DataIdx < len; DataIdx++)
+  {
+    ITM_SendChar(*ptr++);
+  }
+  return len;
+}
 /* USER CODE END 4 */
 
 /**

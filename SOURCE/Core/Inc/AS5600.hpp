@@ -13,6 +13,8 @@
 
 // --- Device default address -----------------------------------------------------------
 
+// See data-sheet page 13 for more details on address
+
 const uint8_t AS5600_DEFAULT_ADDRESS = 0x36;
 
 
@@ -27,9 +29,9 @@ public:
 	enum OUTPUT_ANGLE_UNIT : uint8_t {		// Output angle unit
 		DEGREES = 0x00,
 		RADIANS = 0x01,
-		ADC 	= 0x02,
 	};
 
+	// TODO make it possible to acquire it from board with a digital pin ???
 	enum ROTATION_DIRECTION : uint8_t {		// Rotation direction
 		CLOCK_WISE 			= 0,
 		COUNTERCLOCK_WISE 	= 1,
@@ -49,20 +51,19 @@ public:
 	// --- Sensor core methods ----------------------------------------------------------
 
 	// --- Raw values
-	// Return ADC value of the sensed angle, without filtering and gain
+
 	uint16_t getRawAngle(void);
 
-	// Return ADC value of the sensed angle, with filtering and gain
 	uint16_t getAngle(void);
 
 
-	// --- Real values	// TODO float getRealRawAngle ?
+	// --- Real values
+	// TODO float getRealRawAngle ???
 
-	// Return converted value of the sensed angle, with filtering and gain
 	float getRealAngle(OUTPUT_ANGLE_UNIT unit = AS5600::RADIANS);
 
 
-	// TODO changing direction methods ?
+	// TODO changing direction methods ???
 
 
 	// --- Sensor utility methods -------------------------------------------------------
@@ -90,7 +91,7 @@ public:
 
 	// --- Sensor configuration options -------------------------------------------------
 
-	// Refer to data-sheet page 19 for more details
+	// See data-sheet page 19, figure 22 for more details on configuration
 
 	enum POWER_MODE : uint8_t {				// AS5600 power modes
 		NOM 	= 0x00 << 0,				// 6.5 mA
@@ -145,7 +146,8 @@ public:
 
 	// --- Sensor configuration methods -------------------------------------------------
 
-	// --- General configuration // TODO better management
+	// --- General configuration
+	// TODO better management
 
 	bool setConfiguration(uint16_t value);
 	uint16_t getConfiguration(void);
@@ -188,11 +190,12 @@ public:
 
 protected:
 	// --- Device variables -------------------------------------------------------------
+
 	ROTATION_DIRECTION _direction;
 
 	// --- Sensor register map ----------------------------------------------------------
 
-	// Refer to data-sheet page 18 for more details
+	// See data-sheet page 18, figure 21 for more details on registers map
 
 	enum REGISTER : uint8_t {
 		// Configuration registers
@@ -225,6 +228,8 @@ protected:
 
 	// --- Configuration bits masks
 
+	// See data-sheet page 19, table 22 for more details on configuration bits
+
 	const uint8_t POWER_MODE_MASK    	= 0x03;
 	const uint8_t HYSTERESIS_MASK    	= 0x0C;
 	const uint8_t OUTPUT_MODE_MASK   	= 0x30;
@@ -235,6 +240,8 @@ protected:
 
 
 	// --- Magnet status bits masks
+
+	// See data-sheet page 20, table 23 for more details on status bits
 
 	const uint8_t MAGNET_STRONG   	= 0x08;
 	const uint8_t MAGNET_WEAK    	= 0x10;
@@ -253,3 +260,5 @@ protected:
 
 };
 
+
+// END OF FILE
