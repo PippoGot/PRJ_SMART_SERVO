@@ -114,10 +114,6 @@ int main(void)
   {
     /* USER CODE END WHILE */
 
-
-	bool connected = CurrentSensor1.isConnected();
-	connected = CurrentSensor2.isConnected();
-
 	i1 = CurrentSensor1.getCurrent_A();
 	i2 = CurrentSensor2.getCurrent_A();
 	i = (i1 - i2) / 2;

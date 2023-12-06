@@ -6,10 +6,7 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
 ../Core/Src/AS5600.cpp \
-<<<<<<< HEAD
-=======
 ../Core/Src/INA219.cpp \
->>>>>>> code
 ../Core/Src/i2c_device.cpp \
 ../Core/Src/main.cpp 
 
