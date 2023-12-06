@@ -30,7 +30,10 @@ uint32_t response_delay
 ) :
 		I2C_Device(device_handle, device_address, response_delay),
 		_direction(direction)
-	{}
+	{
+		AS5600::_previous_angle = AS5600::getAngle();
+		AS5600::_turns = -1;
+	}
 
 
 // --- Sensor core methods --------------------------------------------------------------
@@ -41,7 +44,7 @@ uint32_t response_delay
  * @brief Gets the content of the raw angle register (unfiltered position in ADC format).
  *
  */
-uint16_t AS5600::getRawAngle(void){
+uint16_t AS5600::getRawNoisyAngle(void){
 	// Read the register
 	uint16_t register_content;
 	AS5600::LLR_16Bits(AS5600::RAW_ANGLE_H, &register_content);
@@ -57,7 +60,7 @@ uint16_t AS5600::getRawAngle(void){
  * @brief Gets the content of the angle register (filtered position in ADC format).
  *
  */
-uint16_t AS5600::getAngle(void){
+uint16_t AS5600::getRawAngle(void){
 	// Read the register
 	uint16_t register_content;
 	AS5600::LLR_16Bits(AS5600::ANGLE_H, &register_content);
@@ -78,17 +81,41 @@ uint16_t AS5600::getAngle(void){
  * @param unit	Unit of measure of the output value;
  *
  */
-float AS5600::getRealAngle(AS5600::OUTPUT_ANGLE_UNIT unit){
+float AS5600::getAngle(AS5600::OUTPUT_ANGLE_UNIT unit){
 	// Get the ADC value
-	uint16_t angle = AS5600::getAngle();
+	uint16_t angle = AS5600::getRawAngle();
 
-	// If radians is selected, return result in radians
-	if(unit == AS5600::RADIANS){
-		return angle * AS5600::ADC_TO_RADIANS;
-	}
+	// Update angle state variable
+	float result = angle * AS5600::ADC_TO_RAD;
 
-	// Return result in degrees
-	return angle * AS5600::ADC_TO_DEGREES;
+	// If the output unit is degrees, convert
+	if(AS5600::DEG == unit) return result * AS5600::RAD_TO_DEG;
+
+	// Return result in radians
+	return result;
+}
+
+float AS5600::getUnwrappedAngle(AS5600::OUTPUT_ANGLE_UNIT unit){
+	// Compute necessary values
+	float current_angle = AS5600::getAngle();
+	float gap = AS5600::_previous_angle - current_angle;
+	int8_t sign = round(gap / abs(gap));
+
+	// Update angle state variable
+	AS5600::_previous_angle = current_angle;
+
+	// If the gap is bigger than threshold, increment/decrement turns
+	if(AS5600::PI <= abs(gap)) AS5600::_turns += sign;
+
+	// Compute total angle
+	float result = current_angle + AS5600::_turns * AS5600::FULL_TURN;
+	AS5600::_cumulative_angle = result;
+
+	// If the output unit is degrees, convert
+	if(AS5600::DEG == unit) return result * AS5600::RAD_TO_DEG;
+
+	// Return result in radians
+	return result;
 }
 
 

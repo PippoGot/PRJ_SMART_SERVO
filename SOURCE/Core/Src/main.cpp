@@ -44,6 +44,7 @@
 I2C_HandleTypeDef hi2c1;
 
 TIM_HandleTypeDef htim1;
+TIM_HandleTypeDef htim3;
 
 /* USER CODE BEGIN PV */
 
@@ -55,13 +56,23 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_TIM1_Init(void);
 static void MX_I2C1_Init(void);
+static void MX_TIM3_Init(void);
 /* USER CODE BEGIN PFP */
 
-float i1 = 0, i2 = 0, i = 0;
+float Current_A = 0, Voltage_V = 0, Angle_DEG = 0;
 
-float v_bus1 = 0, v_bus2 = 0, v = 0;
+float current1 = 0, current2 = 0;
+float voltage1 = 0, voltage2 = 0;
 
-float angle = 0;
+uint32_t time = 0;
+uint8_t step = 3; // 30% duty cycle as default
+int direction = 1;
+
+AS5600 Encoder(&hi2c1, 0x36, AS5600::CLOCK_WISE, 0x01);
+
+const float shunt_resistor = 0.1, max_expected_current = 3.0;	// Ohms, Amps
+INA219 CurrentSensor1(&hi2c1, max_expected_current, shunt_resistor, 0x40, 0x01);
+INA219 CurrentSensor2(&hi2c1, max_expected_current, shunt_resistor, 0x44, 0x01);
 
 /* USER CODE END PFP */
 
@@ -76,11 +87,7 @@ float angle = 0;
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	AS5600 Encoder(&hi2c1, 0x36, AS5600::CLOCK_WISE, 0x01);
 
-	const float shunt_resistor = 0.1, max_expected_current = 3.0;	// Ohms, Amps
-	INA219 CurrentSensor1(&hi2c1, max_expected_current, shunt_resistor, 0x40, 0x01);
-	INA219 CurrentSensor2(&hi2c1, max_expected_current, shunt_resistor, 0x44, 0x01);
 
   /* USER CODE END 1 */
 
@@ -104,8 +111,10 @@ int main(void)
   MX_GPIO_Init();
   MX_TIM1_Init();
   MX_I2C1_Init();
+  MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
-
+  HAL_TIM_Base_Start_IT(&htim3);
+  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -113,22 +122,59 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
-	i1 = CurrentSensor1.getCurrent_A();
-	i2 = CurrentSensor2.getCurrent_A();
-	i = (i1 - i2) / 2;
-
-	v_bus1 = CurrentSensor1.getBusVoltage_V();
-	v_bus2 = CurrentSensor2.getBusVoltage_V();
-	v = (v_bus2 - v_bus1);
-
-	angle = Encoder.getRealAngle(AS5600::DEGREES);
-
-	HAL_Delay(1);
-
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
+}
+
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
+{
+	// Increment time variable
+	time++;
+
+	// Manage PWM output - Staircase
+	/*
+	if(time % 5000 == 0){
+		step++;
+
+		if(11 == step) step = 3;
+	}
+
+	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, step*0.1*2048);
+
+
+	// Manage PWM output - Triangle
+	uint16_t pwm;
+
+	if(time % 2000 == 0){
+			if(1 == direction) {
+				direction = -1;
+			}
+			else if(-1 == direction){
+				direction = 1;
+			}
+	}
+
+	if(1 == direction) {
+		pwm = (0.1 + (time % 2000) * 0.0004) * 2048;
+	}
+	else if(-1 == direction){
+		pwm = (0.1 + (2000 - time % 2000) * 0.0004) * 2048;
+	}
+	*/
+
+	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, pwm);
+
+	// Acquire data
+	current1 = CurrentSensor1.getCurrent_A();
+	current2 = CurrentSensor2.getCurrent_A();
+	Current_A = (current1 - current2) / 2;
+
+	voltage1 = CurrentSensor1.getBusVoltage_V();
+	voltage2 = CurrentSensor2.getBusVoltage_V();
+	Voltage_V = (voltage1 - voltage2);
+
+	Angle_DEG = Encoder.getUnwrappedAngle(AS5600::DEG);
 }
 
 /**
@@ -224,9 +270,9 @@ static void MX_TIM1_Init(void)
 
   /* USER CODE END TIM1_Init 1 */
   htim1.Instance = TIM1;
-  htim1.Init.Prescaler = 311;
+  htim1.Init.Prescaler = 31 - 1;
   htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim1.Init.Period = 4095;
+  htim1.Init.Period = 2048 - 1;
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim1.Init.RepetitionCounter = 0;
   htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
@@ -279,6 +325,51 @@ static void MX_TIM1_Init(void)
 
   /* USER CODE END TIM1_Init 2 */
   HAL_TIM_MspPostInit(&htim1);
+
+}
+
+/**
+  * @brief TIM3 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM3_Init(void)
+{
+
+  /* USER CODE BEGIN TIM3_Init 0 */
+
+  /* USER CODE END TIM3_Init 0 */
+
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+
+  /* USER CODE BEGIN TIM3_Init 1 */
+
+  /* USER CODE END TIM3_Init 1 */
+  htim3.Instance = TIM3;
+  htim3.Init.Prescaler = 64 - 1;
+  htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim3.Init.Period = 1000 - 1;
+  htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim3, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim3, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM3_Init 2 */
+
+  /* USER CODE END TIM3_Init 2 */
 
 }
 

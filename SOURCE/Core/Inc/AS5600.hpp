@@ -2,10 +2,13 @@
  * AS5600.hpp
  *
  * Module to interface with AS5600 magnetic encoder chip.
+ * Unless otherwise specified, default units are radians and radians over second.
  *
  */
 
 #pragma once
+
+#include <cmath>
 
 #include "i2c_device.hpp"
 
@@ -27,8 +30,13 @@ public:
 	// --- Miscellaneous sensor options -------------------------------------------------
 
 	enum OUTPUT_ANGLE_UNIT : uint8_t {		// Output angle unit
-		DEGREES = 0x00,
-		RADIANS = 0x01,
+		DEG = 0x00,
+		RAD = 0x01,
+	};
+
+	enum OUTPUT_SPEED_UNIT : uint8_t {		// Output speed unit
+		RAD_S 	= 0x00,
+		RPM		= 0x01,
 	};
 
 	// TODO make it possible to acquire it from board with a digital pin ???
@@ -52,16 +60,15 @@ public:
 
 	// --- Raw values
 
+	uint16_t getRawNoisyAngle(void);
 	uint16_t getRawAngle(void);
-
-	uint16_t getAngle(void);
 
 
 	// --- Real values
 	// TODO float getRealRawAngle ???
 
-	float getRealAngle(OUTPUT_ANGLE_UNIT unit = AS5600::RADIANS);
-
+	float getAngle(OUTPUT_ANGLE_UNIT unit = AS5600::RAD);
+	float getUnwrappedAngle(OUTPUT_ANGLE_UNIT unit = AS5600::RAD);// TODO comment
 
 	// TODO changing direction methods ???
 
@@ -193,6 +200,10 @@ protected:
 
 	ROTATION_DIRECTION _direction;
 
+	float _previous_angle;
+	float _cumulative_angle;
+	int _turns;
+
 	// --- Sensor register map ----------------------------------------------------------
 
 	// See data-sheet page 18, figure 21 for more details on registers map
@@ -251,13 +262,16 @@ protected:
 	// --- Utility conversion constants -------------------------------------------------
 
 	const float PI = 3.14159265359;
+	const float FULL_TURN = 2 * PI;
 
-	const float ADC_TO_DEGREES = 360.0 / 4096;
-	const float DEGREES_TO_ADC = 4096 / 360.0;
+	const float ADC_TO_DEG = 360.0 / 4096;
+	const float DEG_TO_ADC = 4096 / 360.0;
 
-	const float ADC_TO_RADIANS = (PI * 2.0) / 4096;
-	const float RADIANS_TO_ADC = 4096 / (PI * 2.0);
+	const float ADC_TO_RAD = (PI * 2.0) / 4096;
+	const float RAD_TO_ADC = 4096 / (PI * 2.0);
 
+	const float RAD_TO_DEG = 180 / PI;
+	const float DEG_TO_RAD = PI / 180;
 };
 
 
