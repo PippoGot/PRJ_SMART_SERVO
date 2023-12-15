@@ -25,3 +25,11 @@ Ao = A - L*C;
 Bo = [B L];
 Co = eye(3);
 Do = zeros(3, 3);
+
+%% Discretization of the state-space
+sysc = ss(A,B,C,D);
+sysd = c2d(sysc,uc.Ts,'zoh');
+
+[Phi,Gamma,H,J] = ssdata(sysd);
+
+
