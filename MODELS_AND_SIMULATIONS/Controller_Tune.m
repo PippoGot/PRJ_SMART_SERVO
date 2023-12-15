@@ -43,10 +43,3 @@ Gw = Lw / (1 + Lw);
 % figure(1)
 % bode(Lw, Gw)
 
-
-%% P Tune of Position Controller
-
-% ???
-
-
-

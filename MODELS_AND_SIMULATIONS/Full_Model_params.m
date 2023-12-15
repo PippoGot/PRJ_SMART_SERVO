@@ -136,15 +136,12 @@ motor.Te = motor.La / motor.Ra;                             %               [s]
 motor.Tm1 = (motor.J * motor.Ra) / motor.Kphi^2;            %               [s]
 
 
-%% Current Sensor Circuit Parameters
+%% Sensors Parameters
 
-csens.Rf = 220e3;       % feedback resistance                               [Ohm]
-csens.Rg = 10e3;        % gain resistance                                   [Ohm]
-csens.Rs = 0.1;         % shunt resistance                                  [Ohm]
+INA219.q = 4e-3;                        % quantization step of current      [A]
 
-csens.gain = csens.Rs * (1 + csens.Rf / csens.Rg);  % current gain          [#] 
-
-
+AS5600.q_deg = 360 / 4096;              % quantization step of position     [°]
+AS5600.q_rad = AS5600.q_deg * pi / 180; % quantization step of position     [rad]
 
 
 

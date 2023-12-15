@@ -33,6 +33,8 @@ original servo controller board;
 - "MODELS & SIMULATIONS": contains the Simulink and LTSpice models, as well as the
 Matlab scripts for parameters and controller tuning;
 
+- "SOURCE": contains all the code for the microcontroller;
+
 - "STM32 PDFs & DATASHEET": contains the documentation of the microcontroller
 applied to the board, as well as some useful PDFs for making and programming
 embedded projects using the microcontroller itself;

@@ -1,0 +1,10 @@
+../Core/Src/i2c_device.cpp:23:1:I2C_Device::I2C_Device(I2C_HandleTypeDef*, uint8_t, uint32_t)	24	static
+../Core/Src/i2c_device.cpp:38:19:HAL_StatusTypeDef I2C_Device::LLR_8Bits(uint8_t, uint8_t*)	40	static
+../Core/Src/i2c_device.cpp:55:19:HAL_StatusTypeDef I2C_Device::LLR_16Bits(uint8_t, uint16_t*)	48	static
+../Core/Src/i2c_device.cpp:84:19:HAL_StatusTypeDef I2C_Device::LLW_8Bits(uint8_t, uint8_t)	32	static
+../Core/Src/i2c_device.cpp:101:19:HAL_StatusTypeDef I2C_Device::LLW_16Bits(uint8_t, uint16_t)	40	static
+../Core/Src/i2c_device.cpp:130:6:bool I2C_Device::isConnected()	24	static
+../Core/Src/i2c_device.cpp:161:9:uint8_t I2C_Device::mask_8Bits(uint8_t, uint8_t, bool)	16	static
+../Core/Src/i2c_device.cpp:177:10:uint16_t I2C_Device::mask_16Bits(uint16_t, uint16_t, bool)	24	static
+../Core/Src/i2c_device.cpp:194:10:uint16_t I2C_Device::concat_8to16Bits(uint8_t*)	16	static
+../Core/Src/i2c_device.cpp:206:6:void I2C_Device::break_16to8Bits(uint16_t, uint8_t*)	24	static
