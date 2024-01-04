@@ -7,10 +7,14 @@ clc
 
 %% Conversion Constants
 
-conv.rpm__to__rad_s = 2*pi/60;
 conv.g_cm2__to__kg_m2 = 1e-7;
 conv.kgf_cm__to__Nm = 0;
 
+conv.deg__to__rad = pi/180;
+conv.rad__to_deg = 1/conv.deg__to__rad;
+
+conv.rpm__to__rad_s = 2*pi/60;
+conv.rad_s__to__rpm = 1/conv.rpm__to__rad_s;
 
 %% Saturation Values
 
@@ -40,7 +44,7 @@ uc.adc_q = uc.adc_fs / (2^uc.adc_bits - 1); % quantization step             [V]
 
 
 % PWM Generation
-uc.pwm_psc = 63;                     % prescaler                             [#]
+uc.pwm_psc = 12;                    % prescaler                             [#]
 uc.pwm_values = 999;                % PWM steps                             [#]
 uc.duty_step = 1 / uc.pwm_values;   % smallest duty cycle variation         [%]
 
@@ -78,9 +82,11 @@ diode.Id = 2.5;         % diode source current                              [A]
 
 
 % Transfer Function Parameters
-bridge.fsw = uc.fpwm;           % switching frequency                       [Hz]
-bridge.gain = pwr.Vcc;          % bridge voltage gain (duty to voltage)     [V]
-bridge.Tdelay = 1 / bridge.fsw; % bridge delay time                         [s]
+bridge.fsw = uc.fpwm;                   % switching frequency               [Hz]
+bridge.gain = pwr.Vcc;                  % bridge voltage gain               [V]
+bridge.Tdelay = 1 / bridge.fsw;         % bridge delay time                 [s]
+
+bridge.R = PMOS.Rdson + NMOS.Rdson;     % bridge leg on resistance          [Ohm]
 
 
 %% Inverter MOSFET Parameters (From AO3400 Datasheet)
@@ -121,7 +127,7 @@ motor.In = 0.42;                    % motor load current                    [A] 
 motor.ts = 4.5;                     % motor stall torque                    [mN*m]      INDIRECTLY FROM DS
 
 motor.J = 1.2*conv.g_cm2__to__kg_m2;% motor inertia                         [Kg*m^2]    TO ESTIMATE
-motor.B = 0;                        % motor friction                        [N*m*s]     TO ESTIMATE
+motor.B = 1e-5;                     % motor friction                        [N*m*s]     TO ESTIMATE
 
 motor.gearbox = 11/(61*36);         % gearbox ratio                         [#]         COUNTED
 
@@ -134,6 +140,9 @@ motor.Te = motor.La / motor.Ra;                             %               [s]
 
 % motor electromechanical time constant
 motor.Tm1 = (motor.J * motor.Ra) / motor.Kphi^2;            %               [s]
+
+% motor mechanical time constant
+motor.Tm = motor.J / motor.B;                               %               [s]
 
 
 %% Sensors Parameters
