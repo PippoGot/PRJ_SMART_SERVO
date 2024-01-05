@@ -7,9 +7,14 @@ clc
 
 %% Conversion Constants
 
-conv.rpm__to__rad_s = 2*pi/60;
 conv.g_cm2__to__kg_m2 = 1e-7;
 conv.kgf_cm__to__Nm = 0;
+
+conv.deg__to__rad = pi/180;
+conv.rad__to__deg = 1/conv.deg__to__rad;
+
+conv.rpm__to__rad_s = 2*pi/60;
+conv.rad_s__to__rpm = 1/conv.rpm__to__rad_s;
 
 
 %% Saturation Values
@@ -40,7 +45,7 @@ uc.adc_q = uc.adc_fs / (2^uc.adc_bits - 1); % quantization step             [V]
 
 
 % PWM Generation
-uc.pwm_psc = 63;                     % prescaler                             [#]
+uc.pwm_psc = 12;                     % prescaler                             [#]
 uc.pwm_values = 999;                % PWM steps                             [#]
 uc.duty_step = 1 / uc.pwm_values;   % smallest duty cycle variation         [%]
 
@@ -81,6 +86,8 @@ diode.Id = 2.5;         % diode source current                              [A]
 bridge.fsw = uc.fpwm;           % switching frequency                       [Hz]
 bridge.gain = pwr.Vcc;          % bridge voltage gain (duty to voltage)     [V]
 bridge.Tdelay = 1 / bridge.fsw; % bridge delay time                         [s]
+
+bridge.R = NMOS.Rdson + PMOS.Rdson;
 
 
 %% Inverter MOSFET Parameters (From AO3400 Datasheet)
