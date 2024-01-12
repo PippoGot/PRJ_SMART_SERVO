@@ -19,9 +19,9 @@ conv.rad_s__to__rpm = 1/conv.rpm__to__rad_s;
 
 %% Saturation Values
 
-sat.w = 12000;      % saturation speed                                      [rpm]
-sat.I = 1.5;        % saturation current                                    [I]
-sat.d = 1;          % saturation duty-cycle                                 [#]
+sat.w = 12000 * conv.rpm__to__rad_s;    % saturation speed                  [rad/s]
+sat.I = 1.5;                            % saturation current                [I]
+sat.d = 1;                              % saturation duty-cycle             [#]
 
 
 %% Power Parameters
@@ -102,15 +102,6 @@ AO3400.Crss = 77;       % reverse transfer capacitance                      [pF]
 AO3400.Coss = 99;       % output capacitance                                [pF]
 
 
-%% Op-Amp Parameters (From LM358 Datasheet)
-
-opamp.gain = 1e5;       % DC voltage gain                                   [#]
-opamp.Rin = 1e6;        % input resistance                                  [Ohm]
-opamp.Rout = 1.2e3;     % output resistance                                 [Ohm]
-opamp.Vmin = 0;         % minimum output voltage                            [V]
-opamp.Vmax = 3.5;       % maximum output voltage                            [V]
-
-
 %% Motor Parameters
 
 motor.Ra = 2;                       % motor armature resistance             [Ohm]       MEASURED
@@ -128,7 +119,8 @@ motor.In = 0.42;                    % motor load current                    [A] 
 motor.ts = 4.5;                     % motor stall torque                    [mN*m]      INDIRECTLY FROM DS
 
 motor.J = 1.2*conv.g_cm2__to__kg_m2;% motor inertia                         [Kg*m^2]    TO ESTIMATE
-motor.B = 0;                        % motor friction                        [N*m*s]     TO ESTIMATE
+motor.B = 1e-6;                     % motor friction                        [N*m*s]     TO ESTIMATE
+motor.tau = 1e-3;                   % motor static friction                 TO ESTIMATE
 
 motor.gearbox = 11/(61*36);         % gearbox ratio                         [#]         COUNTED
 
@@ -144,8 +136,10 @@ motor.Tm1 = (motor.J * motor.Ra) / motor.Kphi^2;            %               [s]
 
 
 %% Sensors Parameters
-
-INA219.q = 4e-3;                        % quantization step of current      [A]
+INA219.Rs = 0.1;                        % shunt resistance                  [Ohm]
+INA219.Imax = 3;                        % maximum expected current          [A]
+INA219.current_LSB = INA219.Imax/2^15;  % current quantization step         [A]
+INA219.voltage_LSB = 4e-3;              % bus voltage quantization step     [V] 
 
 AS5600.q_deg = 360 / 4096;              % quantization step of position     [°]
 AS5600.q_rad = AS5600.q_deg * pi / 180; % quantization step of position     [rad]

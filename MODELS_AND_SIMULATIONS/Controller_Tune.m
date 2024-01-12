@@ -8,45 +8,76 @@ Full_Model_params;
 s = tf('s');
 
 
+%% Specifications
+
+Ri.wb = 500;                    % current bandwidth                         [rad/s]
+Ri.mphi = 80 * pi/180;          % current phase margin                      [rad]
+
+Rw.tr = 0.01;                   % speed rise time                           [s]
+Rw.wb = 2.2 / Rw.tr;            % speed bandwith                            [rad/s]
+Rw.mphi = 80 * pi/180;          % speed phase margin                        [rad]
+
+Rt.tr = 0.02;                   % position rise time                        [s]
+Rt.wb = 2.2 / Rt.tr;            % position bandwith                         [rad/s]
+
+
 %% PI Tune of Current Controller
 
-Ki1 = (motor.Tm1^2 + bridge.Tdelay^2) / (2*motor.Tm1*bridge.Tdelay) - 1;
+Ai = bridge.gain * motor.Tm1 / motor.Ra;
 
-Ri.Tpi = motor.Te;
-Ri.Ki = Ki1 * motor.Ra / (bridge.gain * motor.Tm1);
-Ri.Kp = Ri.Tpi * Ri.Ki;
+Li1 = Ai / ((1+s*bridge.Tdelay)*(1+s*motor.Te)*(1+s*motor.Tm1));
+[mag_i1, phase_i1] = bode(Li1, Ri.wb);
 
-Ai = Ri.Ki * bridge.gain * motor.Tm1 / motor.Ra;
-Li = Ai / ((1 + s * motor.Tm1) * (1 + s * bridge.Tdelay));
+Ri.Tpi = tan(Ri.mphi - 180 - phase_i1) / Ri.wb;
+
+Li2 = (1+s*Ri.Tpi) * Li1;
+[mag_i2, phase_i2] = bode(Li2, Ri.wb);
+
+Ri.Ki = 1 / mag_i1;
+Ri.Kp = Ri.Ki * Ri.Tpi;
+
+Li = Ri.Ki * Li2;
 Gi = Li / (1 + Li);
+
+% figure(1);
+% bode(Li, Gi);
 
 
 %% PI Tune of Speed Controller
 
-Rw.tr = 0.01;
-Rw.wb = 2.2 / Rw.tr;
-Rw.mphi = 65;
+Aw = motor.Kphi / motor.J;
 
-Rw.Tpi = -tan(Rw.mphi) / Rw.wb;
+Lw1 = Aw * Gi / s^2;
+[mag_w1, phase_w1] = bode(Lw1, Rw.wb);
 
+Rw.Tpi = tan(Rw.mphi - 180 - phase_w1) / Rw.wb;
 
-Lw1 = Gi * motor.Kphi * (1 + s * Rw.Tpi) / (s^2 * motor.J);
-[magnitude, phase] = bode(Lw1, Rw.wb);
+Lw2 = (1+s*Rw.Tpi) * Lw1;
+[mag_w2, phase_w2] = bode(Lw2, Rw.wb);
 
-Rw.Ki = 1 / magnitude;
-Rw.Kp = Rw.Tpi * Rw.Ki;
+Rw.Ki = 1 / mag_w1;
+Rw.Kp = Rw.Ki * Rw.Tpi;
 
-Lw = Rw.Ki * Lw1;
+Lw = Rw.Ki * Lw2;
 Gw = Lw / (1 + Lw);
 
-
-% figure(1)
+% figure(2)
 % bode(Lw, Gw)
 
 
-%% P Tune of Position Controller
+%% PI Tune of Position Controller
 
-% ???
+At = motor.gearbox;
 
+Lt1 = At * Gw / s;
+[mag_t1, phase_t1] = bode(Lt1, Rt.wb);
+
+Rt.Kp = 1 / mag_t1;
+
+Lt = Rt.Kp * Lt1;
+Gt = Lt / (1 + Lt);
+
+% figure(3)
+% bode(Lt, Gt)
 
 
