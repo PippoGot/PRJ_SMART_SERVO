@@ -10,15 +10,14 @@ s = tf('s');
 
 %% Specifications
 
-Ri.wb = 500;                    % current bandwidth                         [rad/s]
-Ri.mphi = 80 * pi/180;          % current phase margin                      [rad]
+Ri.wb = 55;                     % current bandwidth                         [rad/s]
+Ri.mphi = 50 * pi/180;          % current phase margin                      [rad]
 
-Rw.tr = 0.01;                   % speed rise time                           [s]
-Rw.wb = 2.2 / Rw.tr;            % speed bandwith                            [rad/s]
-Rw.mphi = 80 * pi/180;          % speed phase margin                        [rad]
+Rw.wb = 20;                     % speed bandwith                            [rad/s]
+Rw.mphi = 100 * pi/180;         % speed phase margin                        [rad]
 
-Rt.tr = 0.02;                   % position rise time                        [s]
-Rt.wb = 2.2 / Rt.tr;            % position bandwith                         [rad/s]
+Rt.wb = 10;                     % position bandwith                         [rad/s]
+Rt.mphi = 70 * pi/180;
 
 
 %% PI Tune of Current Controller
@@ -55,10 +54,8 @@ Rw.Tpi = tan(Rw.mphi - 180 - phase_w1) / Rw.wb;
 Lw2 = (1+s*Rw.Tpi) * Lw1;
 [mag_w2, phase_w2] = bode(Lw2, Rw.wb);
 
-% Rw.Ki = 1 / mag_w1;
-% Rw.Kp = Rw.Ki * Rw.Tpi;
-Rw.Kp = 0.785;
-Rw.Ki = 100;
+Rw.Ki = 1 / mag_w1;
+Rw.Kp = Rw.Ki * Rw.Tpi;
 
 Lw = Rw.Ki * Lw2;
 Gw = Lw / (1 + Lw);
@@ -74,7 +71,7 @@ At = 1;
 Lt1 = At * Gw / s;
 [mag_t1, phase_t1] = bode(Lt1, Rt.wb);
 
-Rt.Kp = 1 / mag_t1;
+Rt.Kp = 1/mag_t1;
 
 Lt = Rt.Kp * Lt1;
 Gt = Lt / (1 + Lt);

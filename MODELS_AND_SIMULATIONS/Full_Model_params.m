@@ -19,7 +19,7 @@ conv.rad_s__to__rpm = 1/conv.rpm__to__rad_s;
 
 %% Saturation Values
 
-sat.w = 12000 * conv.rpm__to__rad_s;    % saturation speed                  [rad/s]
+sat.w = 50 * conv.rpm__to__rad_s;       % saturation speed                  [rad/s]
 sat.I = 1.5;                            % saturation current                [I]
 sat.d = 1;                              % saturation duty-cycle             [#]
 
@@ -141,13 +141,20 @@ motor.Tm = motor.J / motor.B;                               %               [s]
 %% Sensors Parameters
 INA219.Rs = 0.1;                        % shunt resistance                  [Ohm]
 INA219.Imax = 3;                        % maximum expected current          [A]
+
 INA219.current_LSB = INA219.Imax/2^15;  % current quantization step         [A]
 INA219.voltage_LSB = 4e-3;              % bus voltage quantization step     [V] 
 
 AS5600.q_deg = 360 / 4096;              % quantization step of position     [°]
 AS5600.q_rad = AS5600.q_deg * pi / 180; % quantization step of position     [rad]
 
+sf.csi = 1/sqrt(2);                     % speed filter dampening coeff.     [#]
+sf.w = 50;                              % speed filter cutoff frequency     [rad/s]
 
+cf.csi = 1/sqrt(2);                     % current filter dampening coeff.   [#]
+cf.w = 50;                              % current filter cutoff frequency   [rad/s]
 
+vf.csi = 1/sqrt(2);                     % voltage filter dampening coeff.   [#]
+vf.w = 50;                              % voltage filter cutoff frequency   [rad/s]
 
 
