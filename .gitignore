@@ -7,6 +7,7 @@ MODELS_AND_SIMULATIONS/*.bin
 **/*.elf
 **_ert_rtw/
 **/*.DS_Store
+**/*.autosave
 
 # Other
 
