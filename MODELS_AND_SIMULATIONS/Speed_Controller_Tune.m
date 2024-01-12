@@ -15,7 +15,7 @@ Ri.mphi = 80 * pi/180;          % current phase margin                      [rad
 
 Rw.tr = 0.01;                   % speed rise time                           [s]
 Rw.wb = 2.2 / Rw.tr;            % speed bandwith                            [rad/s]
-Rw.mphi = 80 * pi/180;          % speed phase margin                        [rad]
+Rw.mphi = 60 * pi/180;          % speed phase margin                        [rad]
 
 Rt.tr = 0.02;                   % position rise time                        [s]
 Rt.wb = 2.2 / Rt.tr;            % position bandwith                         [rad/s]
@@ -39,47 +39,44 @@ Ri.Kp = Ri.Ki * Ri.Tpi;
 Li = Ri.Ki * Li2;
 Gi = Li / (1 + Li);
 
-% figure(1);
-% bode(Li, Gi);
+figure(1);
+bode(Li, Gi);
 
 
 %% PI Tune of Speed Controller
 
 Aw = motor.Kphi * motor.gearbox / motor.J;
 
+Tw = 1e-5;
+csi = 1/sqrt(2);
+wlp = 500;
+Sw = (s / (1 + s*Tw)) * (wlp^2 / (s^2 + 2*csi*wlp*s + wlp^2));
+
+
+
 Lw1 = Aw * Gi / s^2;
 [mag_w1, phase_w1] = bode(Lw1, Rw.wb);
 
 Rw.Tpi = tan(Rw.mphi - 180 - phase_w1) / Rw.wb;
+% Rw.Tpi = 1/350;
 
 Lw2 = (1+s*Rw.Tpi) * Lw1;
 [mag_w2, phase_w2] = bode(Lw2, Rw.wb);
 
-% Rw.Ki = 1 / mag_w1;
-% Rw.Kp = Rw.Ki * Rw.Tpi;
-Rw.Kp = 0.785;
-Rw.Ki = 100;
+Rw.Ki = 1 / mag_w1;
+Rw.Kp = Rw.Ki * Rw.Tpi;
 
 Lw = Rw.Ki * Lw2;
 Gw = Lw / (1 + Lw);
-
+% 
 % figure(2)
 % bode(Lw, Gw)
-
-
-%% P Tune of Position Controller
-
-At = 1;
-
-Lt1 = At * Gw / s;
-[mag_t1, phase_t1] = bode(Lt1, Rt.wb);
-
-Rt.Kp = 1 / mag_t1;
-
-Lt = Rt.Kp * Lt1;
-Gt = Lt / (1 + Lt);
-
+% margin(Lw)
 % figure(3)
-% bode(Lt, Gt)
+% margin(Gw)
 
-Ri, Rw, Rt
+Rw.Kp = 0.785;
+Rw.Ki = 100;
+
+
+Rw
