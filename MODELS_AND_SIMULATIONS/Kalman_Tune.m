@@ -1,12 +1,3 @@
-%% Initialization
-
-close all
-clc
-
-Full_Model_params;
-Controller_Tune;
-
-
 %% State Space Model
 
 % Continuous Time
