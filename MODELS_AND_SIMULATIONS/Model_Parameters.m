@@ -101,10 +101,10 @@ AO3400.Coss = 99;       % output capacitance                                [pF]
 motor.Ra = 2;                           % motor armature resistance         [Ohm]       MEASURED
 motor.La = 7e-3;                        % motor armature inductance         [H]         MEASURED
 
-motor.Kphi =1.8e-3;                     % torque/back emf constant          [V*s]       TO ESTIMATE
+motor.Kphi = 1.8e-3;                     % torque/back emf constant          [V*s]       TO ESTIMATE
 
 motor.J = 1.2*conv.g_cm2__to__kg_m2;    % motor inertia                     [Kg*m^2]    TO ESTIMATE
-motor.B = 2e-10;                        % motor friction                    [N*m*s]     TO ESTIMATE
+motor.B = 2e-7;                        % motor friction                    [N*m*s]     TO ESTIMATE
 motor.tau = 1.2e-4;                     % motor static friction             [N*m]       TO ESTIMATE
 
 motor.gearbox = 11/(61*36);             % gearbox ratio                     [#]         COUNTED
