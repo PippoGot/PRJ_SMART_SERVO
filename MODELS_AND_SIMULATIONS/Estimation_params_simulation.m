@@ -17,6 +17,8 @@ ex1.t_tran = 1;              % Time of transient smaples to delate in experiment
 ex1.t_delta = 10;            % Period of the step in experiment 1
 ex1.M = 20;                  % Number of step of the steircase function reference (To use on simulink) (maybe not necessary)
 
+load("data_ex1.mat")    % Load data of experiment 1
+
 ex1.V_filtered = out.data.signals(4).values(:,2);                          % [V]
 ex1.I_filtered = out.data.signals(3).values(:,2);                          % [A]
 ex1.wl_filtered = out.data.signals(2).values(:,5) * conv.rpm__to__rad_s;   % from [rpm] to [rad/s]
@@ -60,7 +62,7 @@ grid
 
 % Through the data already collect from the previous experiment
 LS.Y = est.Kphi * average.I;                                % Vector of the steady-state motor torque
-LS.phi = [average.wm sign(average.wm)];     % Forse bisogna considerare l'attrito statico del gearbox: 1/N *sign(steady.wm) (come in control lab)
+LS.phi = [average.wm sign(average.wm)];     % Forse bisogna considerare l'attrito statico del gearbox: motor.gearbox *sign(steady.wm) (come in control lab)
 LS.theta = LS.phi \ LS.Y;
 
 est.B = LS.theta(1,1);
@@ -78,15 +80,17 @@ ex2.t_tran = 0.2;              % Time of transient smaples to delate in experime
 ex2.t_delta = 2.5;             % Period of the step in experiment 2
 ex2.M = 46;
 
-% ex2.data=ex2.data(ex2.t_delta*2/t+1:ex2.t_delta*8/t,:);     % Selection of desire intervals (descard first and last ramp). In case of new data it needed to change this selection
+load("data_ex2.mat")    % Load data of experiment 2
 
 ex2.V_filtered = out.data.signals(4).values(:,2);                          % [V]
 ex2.I_filtered = out.data.signals(3).values(:,2);                          % [A]
 ex2.wl_filtered = out.data.signals(2).values(:,5) * conv.rpm__to__rad_s;   % from [rpm] to [rad/s]
 ex2.wm_filtered = ex2.wl_filtered / motor.gearbox;                         % [rad/s]
+ex2.al_filtered = out.data.signals(5).values;
+ex2.am_filtered = ex2.al_filtered / motor.gearbox;
 
-ex2.am = gradient(ex2.wm_filtered);                                        % [rad/s^2]
-ex2.am_filtered = lowpass(ex2.am, 10, 1/t);                                % [rad/s^2]
+%ex2.am = gradient(ex2.wm_filtered);                                        % [rad/s^2]
+%ex2.am_filtered = lowpass(ex2.am, 10, 1/t);                                % [rad/s^2]
 
 ex2.time = out.data.time;
 
@@ -106,6 +110,7 @@ for n = 1:ex2.M
 end
 
 %%
+%{
 for n = 1:ex2.M
     i1(n,1) = 1+(n-1)*(ex2.t_delta-2*ex2.t_tran)/t;
     i2(n,1) = n*(ex2.t_delta-2*ex2.t_tran)/t;
@@ -113,17 +118,17 @@ for n = 1:ex2.M
     i4(n,1) = (ex2.t_delta-ex2.t_tran+(n-1)*ex2.t_delta)/t;
 end
 
-%%
-
 for n = 1:ex2.M-1
     dyn.I(1+(n-1)*(ex2.t_delta-2*ex2.t_tran)/t:n*(ex2.t_delta-2*ex2.t_tran)/t,1) = ex2.I_filtered((ex2.t_tran+(n-1)*ex2.t_delta)/t+1:(ex2.t_delta-ex2.t_tran+(n-1)*ex2.t_delta)/t,1);     % Discard  transient (dyn = dynamic)
     dyn.V(uint16(1+(n-1)*(ex2.t_delta-2*ex2.t_tran)/t):uint16(n*(ex2.t_delta-2*ex2.t_tran)/t),1) = ex2.V_filtered(uint16((ex2.t_tran+(n-1)*ex2.t_delta)/t+1):uint16((ex2.t_delta-ex2.t_tran+(n-1)*ex2.t_delta)/t),1);
     dyn.wm(uint16(1+(n-1)*(ex2.t_delta-2*ex2.t_tran)/t):uint16(n*(ex2.t_delta-2*ex2.t_tran)/t),1) = ex2.wm_filtered(uint16((ex2.t_tran+(n-1)*ex2.t_delta)/t+1):uint16((ex2.t_delta-ex2.t_tran+(n-1)*ex2.t_delta)/t),1);
     dyn.am(uint16(1+(n-1)*(ex2.t_delta-2*ex2.t_tran)/t):uint16(n*(ex2.t_delta-2*ex2.t_tran)/t),1) = ex2.am(uint16((ex2.t_tran+(n-1)*ex2.t_delta)/t+1):uint16((ex2.t_delta-ex2.t_tran+(n-1)*ex2.t_delta)/t),1);
 end
+%}
+
 %%
 dyn.tau_m = est.Kphi * dyn.I;
-dyn.tau_f = est.B * dyn.wm + est.tau_s * sign(dyn.wm); % possibly with gear reatio (est.tau_s / N * sign(dyn.wm))
+dyn.tau_f = est.B * dyn.wm + est.tau_s * sign(dyn.wm); % possibly with gear reatio (est.tau_s * motor.gearbox * sign(dyn.wm))
 dyn.tau_i = dyn.tau_m - dyn.tau_f;
 
 for n = 1:ex2.M
