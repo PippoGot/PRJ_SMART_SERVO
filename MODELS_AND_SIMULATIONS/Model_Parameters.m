@@ -75,7 +75,7 @@ diode.Id = 2.5;         % diode source current                              [A]
 
 % Transfer Function Parameters
 bridge.fsw = uc.fpwm;                   % switching frequency               [Hz]
-bridge.Tdelay = 1 / uc.Ts;              % bridge delay time                 [s]
+bridge.Tdelay = uc.Ts;                  % bridge delay time                 [s]
 
 bridge.gain = pwr.Vcc;                  % bridge voltage gain               [V]
 
