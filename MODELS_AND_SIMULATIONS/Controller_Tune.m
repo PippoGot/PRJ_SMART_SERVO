@@ -5,6 +5,7 @@ s = tf('s');
 
 %% PI Tune of Current Controller
 
+%vvv 
 Ai = bridge.gain * motor.Tm1 / motor.Ra;
 
 Li1 = Ai / ((1+s*bridge.Tdelay)*(1+s*motor.Te)*(1+s*motor.Tm1));
@@ -15,12 +16,26 @@ Ri.Tpi = tan(Ri.mphi - 180 - phase_i1) / Ri.wb;
 Li2 = (1+s*Ri.Tpi) * Li1;
 [mag_i2, phase_i2] = bode(Li2, Ri.wb);
 
-Ri.Ki = 1 / mag_i1;
+Ri.Ki = 1 / mag_i2;
 Ri.Kp = Ri.Ki * Ri.Tpi;
 
 Li = Ri.Ki * Li2;
 Gi = Li / (1 + Li);
+%^^^
 
+% Ai = motor.Tm1 * bridge.gain / motor.Ra;
+% 
+% Li1 = Ai * s / ((1+s*bridge.Tdelay)*(1+s*motor.Te)*(1+s*motor.Tm1));
+% 
+% Ri.Tpi = motor.Tm1;
+% 
+% K1 = (motor.Tm1^2 + bridge.Tdelay^2) / (2*motor.Tm1*bridge.Tdelay) - 1;
+% 
+% Ri.Ki = K1 / Ai;
+% Ri.Kp = Ri.Ki * Ri.Tpi;
+% 
+% Li = Ri.Ki * (1 + s*Ri.Tpi) * Li1 / s;
+% Gi = Li / (1 + Li);
 
 %% PI Tune of Speed Controller
 

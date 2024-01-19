@@ -75,7 +75,7 @@ diode.Id = 2.5;         % diode source current                              [A]
 
 % Transfer Function Parameters
 bridge.fsw = uc.fpwm;                   % switching frequency               [Hz]
-bridge.Tdelay = 1 / bridge.fsw;         % bridge delay time                 [s]
+bridge.Tdelay = 1 / uc.Ts;              % bridge delay time                 [s]
 
 bridge.gain = pwr.Vcc;                  % bridge voltage gain               [V]
 
@@ -101,11 +101,11 @@ AO3400.Coss = 99;       % output capacitance                                [pF]
 motor.Ra = 2;                           % motor armature resistance         [Ohm]       MEASURED
 motor.La = 7e-3;                        % motor armature inductance         [H]         MEASURED
 
-motor.Kphi = 1.8e-3;                     % torque/back emf constant          [V*s]       TO ESTIMATE
+motor.Kphi = 1.8e-3;                    % torque/back emf constant          [V*s]       ESTIMATED
 
-motor.J = 1.2*conv.g_cm2__to__kg_m2;    % motor inertia                     [Kg*m^2]    TO ESTIMATE
-motor.B = 2e-7;                        % motor friction                    [N*m*s]     TO ESTIMATE
-motor.tau = 1.2e-4;                     % motor static friction             [N*m]       TO ESTIMATE
+motor.J = 1.0624e-8;                    % motor inertia                     [Kg*m^2]    ESTIMATED
+motor.B = 1.4969e-8;                    % motor friction                    [N*m*s]     ESTIMATED
+motor.tau = 7.5179e-5;                  % motor static friction             [N*m]       ESTIMATED
 
 motor.gearbox = 11/(61*36);             % gearbox ratio                     [#]         COUNTED
 
