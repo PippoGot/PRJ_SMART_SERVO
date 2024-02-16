@@ -8,7 +8,7 @@ D = zeros(2, 1);
 
 %% Observer Gain and State Space
 
-poles = 4 * eigs(A) + [0; 0; -200];
+poles = 2 * eigs(A) + [0; 0; -200];
 
 L = place(A', C', poles)';
 

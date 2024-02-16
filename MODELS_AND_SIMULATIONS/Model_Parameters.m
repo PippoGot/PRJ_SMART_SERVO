@@ -12,7 +12,7 @@ conv.rad_s__to__rpm = 1/conv.rpm__to__rad_s;    %                           [rad
 
 %% Saturation Values
 
-sat.w = 50 * conv.rpm__to__rad_s;       % saturation speed                  [rad/s]
+sat.w = 100 * conv.rpm__to__rad_s;      % saturation speed                  [rad/s]
 sat.I = 1.5;                            % saturation current                [I]
 sat.d = 1;                              % saturation duty-cycle             [#]
 
@@ -109,11 +109,11 @@ motor.tau = 7.5179e-5;                  % motor static friction             [N*m
 
 motor.gearbox = 11/(61*36);             % gearbox ratio                     [#]         COUNTED
 
-% No Load Parameters
+% No Load Parameters (NOT USED)
 motor.wmo = 12000;      % motor no-load speed                               [rpm]       FROM DS
 motor.Imo = 0.14;       % motor no-load current                             [A]         FROM DS
 
-% Rated Parameters
+% Rated Parameters (NOT USED)
 motor.Vn = 5;           % motor rated voltage                               [V]         FROM DS
 motor.tl = 0.98;        % motor rated load                                  [mN*m]      FROM DS
 motor.wn = 10600;       % motor load speed                                  [rpm]       FROM DS
@@ -130,6 +130,16 @@ motor.Tm1 = (motor.J * motor.Ra) / motor.Kphi^2;            %               [s]
 
 % motor mechanical time constant
 motor.Tm = motor.J / motor.B;                               %               [s]
+
+% State Spaces
+A = [0, motor.gearbox, 0; 0, -1/motor.Tm, motor.Kphi/motor.J; 0, -motor.Kphi/motor.La, -1/motor.Te];
+B = [0; 0; 1/motor.La];
+C = [1 0 0; 0 0 1];
+D = zeros(2, 1);
+
+SYSC = ss(A, B, C, D);
+
+SYSD = c2d(SYSC, uc.Ts);
 
 
 %% Sensors Parameters
@@ -150,14 +160,14 @@ AS5600.q_rad = 2 * pi / 4096;           % quantization step of position     [rad
 
 % Speed Filter
 sf.csi = 1/sqrt(2);                     % speed filter dampening coeff.     [#]
-sf.w = 100;                             % speed filter cutoff frequency     [rad/s]
+sf.w = 500;                            % speed filter cutoff frequency     [rad/s]
 
 % Current Filter
 cf.csi = 1/sqrt(2);                     % current filter dampening coeff.   [#]
-cf.w = 500;                             % current filter cutoff frequency   [rad/s]
+cf.w = 500;                            % current filter cutoff frequency   [rad/s]
 
 % Voltage Filter
 vf.csi = 1/sqrt(2);                     % voltage filter dampening coeff.   [#]
-vf.w = 500;                             % voltage filter cutoff frequency   [rad/s]
+vf.w = 500;                            % voltage filter cutoff frequency   [rad/s]
 
 

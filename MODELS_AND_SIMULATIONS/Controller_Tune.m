@@ -2,11 +2,23 @@
 
 s = tf('s');
 
-%% Transfer Function
+%% Transfer Functions
 
-PE = bridge.gain / (1 + s*bridge.Tdelay);   % H Bridge TF
+% H-Bridge
+PE = bridge.gain / (1 + s*bridge.Tdelay);
+
+% Motor Current
 M1 = (motor.B + s*motor.J) / ((motor.B + s*motor.J)*(motor.Ra + s*motor.La) + motor.Kphi^2);
+
+% Motor Speed
 M2 = motor.Kphi * motor.gearbox / (motor.B + s*motor.J);
+
+% Current Sensor Filter
+CF = cf.w^2 / (s^2 + 2*cf.csi*cf.w*s + cf.w^2);
+
+% Speed Sensor Filter
+SF = sf.w^2*s / (s^2 + 2*sf.csi*sf.w*s + sf.w^2);
+
 
 
 %% PI Tune of Current Controller
@@ -14,13 +26,13 @@ M2 = motor.Kphi * motor.gearbox / (motor.B + s*motor.J);
 Li1 = PE * M1 / s;
 [mag1_i, phase1_i] = bode(Li1, Ri.wb);
 
-Ri.Tpi = tan(Ri.mphi - 180 + phase1_i) / Ri.wb;
+Ri.Tpi = tan(pi/180*(Ri.mphi - 180 + phase1_i)) / Ri.wb;
 
 Li2 = (1+s*Ri.Tpi) * Li1;
 [mag2_i, phase2_i] = bode(Li2, Ri.wb);
 
 Ri.Ki = 1 / mag2_i;
-Ri.Kp = Ri. Ki * Ri.Tpi;
+Ri.Kp = Ri.Ki * Ri.Tpi;
 
 Li = Ri.Ki * Li2;
 Gi = Li / (1 + Li);
@@ -31,7 +43,7 @@ Gi = Li / (1 + Li);
 Lw1 = Gi * M2 / s;
 [mag1_w, phase1_w] = bode(Lw1, Rw.wb);
 
-Rw.Tpi = tan(Rw.mphi - 180 + phase1_w) / Rw.wb;
+Rw.Tpi = tan(pi/180*(Rw.mphi - 180 + phase1_w)) / Rw.wb;
 
 Lw2 = (1+s*Rw.Tpi) * Lw1;
 [mag2_w, phase2_w] = bode(Lw2, Rw.wb);
@@ -48,6 +60,7 @@ Gw = Lw / (1 + Lw);
 % [mag_t1, phase_t1] = bode(Lt1, Rt.wb);
 % 
 % Rt.Kp = 1/mag_t1;
+% Rt.Ki = 0;
 % 
 % Lt = Rt.Kp * Lt1;
 % Gt = Lt / (1 + Lt);
@@ -55,7 +68,7 @@ Gw = Lw / (1 + Lw);
 Lt1 = Gw / s^2;
 [mag1_t, phase1_t] = bode(Lt1, Rt.wb);
 
-Rt.Tpi = tan(Rt.mphi - 180 + phase1_t) / Rt.wb;
+Rt.Tpi = tan(pi/180*(Rt.mphi - 180 + phase1_t)) / Rt.wb;
 
 Lt2 = (1 + s*Rt.Tpi) * Lt1;
 [mag2_t, phase2_t] = bode(Lt2, Rt.wb);
@@ -65,3 +78,9 @@ Rt.Kp = Rt.Ki * Rt.Tpi;
 
 Lt = Rt.Ki * Lt2;
 Gt = Lt / (1 + Lt);
+
+
+
+
+
+

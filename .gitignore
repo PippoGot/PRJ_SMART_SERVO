@@ -8,6 +8,7 @@ MODELS_AND_SIMULATIONS/*.bin
 **_ert_rtw/
 **/*.DS_Store
 **/*.autosave
+**/*.slx.original
 
 # Other
 

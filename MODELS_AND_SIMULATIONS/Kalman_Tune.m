@@ -11,16 +11,5 @@ Dk = zeros(2, 1);
 
 
 %% Noise Matrices
-Q = diag([0, 0, 1, 0]);
-R = diag([AS5600.q_rad^2/12, INA219.current_LSB^2/12 + 1e-6]);
-
-
-%% Conversion to Discrete Time
-
-Ad = expm(Ak*uc.Ts);
-Bd = integral(@(t) expm(Ak.*t), 0, uc.Ts, 'ArrayValued', true)*Bk;
-
-O = [Ck; Ck*Ad; Ck*Ad^2; Ck*Ad^3];
-observable = rank(O)
-
-Qd = integral(@(t) expm(Ak.*t)*Q*expm(Ak'.*t), 0, uc.Ts, 'ArrayValued', true);
+Q = diag([0, 1, motor.tau, 0]);
+R = diag([AS5600.q_rad^2/12, 1]);
