@@ -160,14 +160,14 @@ AS5600.q_rad = 2 * pi / 4096;           % quantization step of position     [rad
 
 % Speed Filter
 sf.csi = 1/sqrt(2);                     % speed filter dampening coeff.     [#]
-sf.w = 500;                            % speed filter cutoff frequency     [rad/s]
+sf.w = 50;                            % speed filter cutoff frequency     [rad/s]
 
 % Current Filter
 cf.csi = 1/sqrt(2);                     % current filter dampening coeff.   [#]
-cf.w = 500;                            % current filter cutoff frequency   [rad/s]
+cf.w = 50;                            % current filter cutoff frequency   [rad/s]
 
 % Voltage Filter
 vf.csi = 1/sqrt(2);                     % voltage filter dampening coeff.   [#]
-vf.w = 500;                            % voltage filter cutoff frequency   [rad/s]
+vf.w = 50;                            % voltage filter cutoff frequency   [rad/s]
 
 
